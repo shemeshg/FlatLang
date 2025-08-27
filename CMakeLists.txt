@@ -15,6 +15,7 @@ add_subdirectory(libFlatLang)
 
 add_subdirectory(external/pybind11)
 pybind11_add_module(flatLangPy flatLangPy/flatLangPy.cpp)
+target_link_libraries(flatLangPy PRIVATE libFlatLang)
 
 add_executable(FlatLang main.cpp)
 target_link_libraries(FlatLang PRIVATE libFlatLang)
