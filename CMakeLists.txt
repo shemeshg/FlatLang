@@ -12,6 +12,8 @@ FetchContent_MakeAvailable(json)
 
 include_directories(${PROJECT_SOURCE_DIR}/external/inja/include/inja)
 
+add_subdirectory(external/pybind11)
+pybind11_add_module(flatLangPy flatLangPy/flatLangPy.cpp)
 
 add_executable(FlatLang main.cpp)
 target_link_libraries(FlatLang PRIVATE nlohmann_json::nlohmann_json )
