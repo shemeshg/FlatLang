@@ -2,6 +2,23 @@
 #include <nlohmann/json.hpp>
 #include <inja.hpp>
 
+const std::string ExternalHwBinding::getDataTypeStr() const {
+        std::string isConstStr;
+        if (isConst)
+        {
+            isConstStr = "const";
+        }
+        if (dataLen == 1)
+        {
+            return isConstStr + " " + datatype + "&";
+        }
+        else
+        {
+
+            return std::format("std::span<{} {},{}>", isConstStr, datatype, dataLen);
+        }
+    }
+
 std::string FlatLangConfig::getConfig()    {
         nlohmann::json externalParams = nlohmann::json::array({});
 

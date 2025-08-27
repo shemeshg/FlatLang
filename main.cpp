@@ -6,21 +6,37 @@
 int main(int, char **)
 {
     FlatLangConfig flatLangConfig;
-    ExternalHwBinding ehb;
-    ehb.tag = "gpio_in";
-    ehb.datatype = "int";
-    ehb.dataLen = 4;
-    ehb.isConst = true;
-    flatLangConfig.externalHwBindings.push_back(ehb);
-    ehb.tag = "gpio_out";
-    ehb.isConst = false;
-    flatLangConfig.externalHwBindings.push_back(ehb);
-    ehb.tag = "tick_counter";
-    ehb.isConst = true;
-    ehb.dataLen = 1;
-    flatLangConfig.externalHwBindings.push_back(ehb);
+    ExternalHwBinding gpio_in;
+    gpio_in.tag = "gpio_in";
+    gpio_in.datatype = "int";
+    gpio_in.dataLen = 4;
+    gpio_in.isConst = true;
+
+    ExternalHwBinding gpio_out;
+    flatLangConfig.externalHwBindings.push_back(gpio_out);
+    gpio_out.tag = "gpio_out";
+    gpio_in.datatype = "int";
+    gpio_in.dataLen = 4;    
+    gpio_out.isConst = false;
+
+    ExternalHwBinding tick_counter;
+    flatLangConfig.externalHwBindings.push_back(tick_counter);
+    tick_counter.tag = "tick_counter";
+    tick_counter.isConst = true;
+    tick_counter.dataLen = 1;
+    flatLangConfig.externalHwBindings.push_back(tick_counter);
 
     std::cout<<flatLangConfig.getConfig();
+
+    SemanticGroup usedInputes;
+    SemanticGroupItem i0(&tick_counter);
+    SemanticGroupItem i1(&gpio_in);
+    i1.fromIdx =0;
+    i1.toIdx = 2;
+    usedInputes.semanticGroups.emplace_back(i0);
+    usedInputes.semanticGroups.emplace_back(i1);
+
+
      /*
     assume:
     # External hardware bindings
