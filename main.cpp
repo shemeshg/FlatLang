@@ -1,57 +1,30 @@
 #include <iostream>
-#include <nlohmann/json.hpp>
-#include <inja.hpp>
-using json = nlohmann::json;
 
-int main(int, char**){
+#include <FlatLangConfig.h>
 
-    /*
+
+int main(int, char **)
+{
+    FlatLangConfig flatLangConfig;
+    ExternalHwBinding ehb;
+    ehb.tag = "gpio_in";
+    ehb.datatype = "int";
+    ehb.dataLen = 4;
+    flatLangConfig.externalHwBindings.push_back(ehb);
+    ehb.tag = "gpio_out";
+    flatLangConfig.externalHwBindings.push_back(ehb);
+    ehb.tag = "tick_counter";
+    ehb.dataLen = 1;
+    flatLangConfig.externalHwBindings.push_back(ehb);
+
+    std::cout<<flatLangConfig.getConfig();
+     /*
     assume:
     # External hardware bindings
-    gpio_in: external int[4] hw_gpio_in    
+    gpio_in: external int[4] hw_gpio_in
     gpio_out: external int[4] hw_gpio_out
     tick_counter: external int clock
 
     toggle_start_stop: alias gpio_in[0]
     */
-
-    nlohmann::json externalParams = nlohmann::json::array({
-        {
-            {"name", "gpio_in"},
-            {"datatype", "std::span<int,4>"},
-        },
-        {
-            {"name", "gpio_out"},
-            {"datatype", "std::span<int,4>"},
-        },
-        {
-            {"name", "clockTick"},
-            {"datatype", "int&"},
-        }
-    });
-
-
-
-    std::string t = R"(
-    #include <span>
-
-    void myRealTimeLoop(
-    {% for var in params %}   
-     {{ var.datatype }} {{ var.name }}{% if not loop.is_last %},{% endif %}    
-    {% endfor %}
-    ) {
-        {% include "impl" %}
-    }
-    )";
-
-    inja::Environment env;
-    inja::Template implTemplate = env.parse("    // Implementation goes here");
-    env.include_template("impl", implTemplate);
-
-
-nlohmann::json data;
-data["params"] = externalParams;
-
-    
-    std::cout << env.render(t, data);
 }
