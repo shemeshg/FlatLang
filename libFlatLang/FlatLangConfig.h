@@ -1,9 +1,6 @@
 #include <iostream>
 #include <format>
 
-
-
-
 // using json = nlohmann::json;
 
 class ExternalHwBinding
@@ -11,16 +8,23 @@ class ExternalHwBinding
 public:
     std::string tag = ".";
     std::string datatype = "int";
+    bool isConst = true;
     int dataLen = 1;
     const std::string getDataTypeStr() const
     {
+        std::string isConstStr;
+        if (isConst)
+        {
+            isConstStr = "const";
+        }
         if (dataLen == 1)
         {
-            return datatype + "&";
+            return isConstStr + " " + datatype + "&";
         }
         else
         {
-            return std::format("std::span<{},{}>", datatype, dataLen);
+
+            return std::format("std::span<{} {},{}>", isConstStr, datatype, dataLen);
         }
     }
 };
@@ -31,5 +35,4 @@ public:
     std::vector<ExternalHwBinding> externalHwBindings;
 
     std::string getConfig();
-
 };

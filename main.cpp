@@ -10,10 +10,13 @@ int main(int, char **)
     ehb.tag = "gpio_in";
     ehb.datatype = "int";
     ehb.dataLen = 4;
+    ehb.isConst = true;
     flatLangConfig.externalHwBindings.push_back(ehb);
     ehb.tag = "gpio_out";
+    ehb.isConst = false;
     flatLangConfig.externalHwBindings.push_back(ehb);
     ehb.tag = "tick_counter";
+    ehb.isConst = true;
     ehb.dataLen = 1;
     flatLangConfig.externalHwBindings.push_back(ehb);
 
