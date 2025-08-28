@@ -11,16 +11,16 @@ int main(int, char **)
     gpio_in.datatype = "int";
     gpio_in.dataLen = 4;
     gpio_in.isConst = true;
+    flatLangConfig.externalHwBindings.push_back(gpio_in);
 
-    ExternalHwBinding gpio_out;
-    flatLangConfig.externalHwBindings.push_back(gpio_out);
+    ExternalHwBinding gpio_out;    
     gpio_out.tag = "gpio_out";
-    gpio_in.datatype = "int";
-    gpio_in.dataLen = 4;    
+    gpio_out.datatype = "int";
+    gpio_out.dataLen = 4;    
     gpio_out.isConst = false;
+    flatLangConfig.externalHwBindings.push_back(gpio_out);
 
     ExternalHwBinding tick_counter;
-    flatLangConfig.externalHwBindings.push_back(tick_counter);
     tick_counter.tag = "tick_counter";
     tick_counter.isConst = true;
     tick_counter.dataLen = 1;
