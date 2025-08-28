@@ -35,13 +35,14 @@ int main(int, char **)
     i1.toIdx = 2;
     usedInputes.semanticGroups.emplace_back(i0);
     usedInputes.semanticGroups.emplace_back(i1);
-    usedInputes.getSemanticGroupsStr();
-    //std::cout<<flatLangConfig.getConfig();
+    flatLangConfig.semanticGroups.emplace_back(usedInputes);
+    
+    std::cout<<flatLangConfig.getConfig();
 
 
     std::vector<int> ins{4};
     std::vector<int> outs{4}; 
-    int tick;
+    int tick=0;
     myRealTimeLoop(std::span<const int, 4>(ins.data(), 4),
                  std::span< int, 4>(outs.data(), 4), 
                  tick);
