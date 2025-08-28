@@ -1,7 +1,8 @@
 #include <iostream>
 #include <format>
 #include <ranges>
-#include <sstream> 
+#include <sstream>
+#include <numeric>
 // using json = nlohmann::json;
 
 class ExternalHwBindingItem
@@ -35,7 +36,7 @@ public:
                     oss << alias << " ";
                 }
                 std::string joinedAliases = oss.str();
-                std::cout << tag << " " << i << " "<<joinedAliases<< std::endl;
+                std::cout << tag << " " << i << " " << joinedAliases << std::endl;
             }
         }
     }
@@ -86,10 +87,43 @@ public:
     std::string datatype = "int";
     bool isConst = true;
 
+    void printAllAliases()
+    {
+        std::cout << "Itterate all semanticGroups for aliases" << std::endl;
+        int semanticGroupIdx = 0;
+        for (const auto &row : semanticGroups)
+        {
+            for (int i = row.fromIdx; i <= row.toIdx; i++)
+            {
+                semanticGroupIdx ++;
+                if (row.ehb->signalPorts[i].aliases.size() > 0)
+                {
+                    std::ostringstream oss;
+                    for (const auto &alias : row.ehb->signalPorts[i].aliases)
+                    {
+                        oss << alias << " ";
+                    }
+                    std::string joinedAliases = oss.str();
+                    std::cout << "SemanticGroup portId " << semanticGroupIdx << " " << joinedAliases << std::endl;
+                }
+            }
+        }
+    }
+
+    const int getDataLen() const
+    {
+        return std::accumulate(
+            semanticGroups.begin(), semanticGroups.end(), 0,
+            [](int sum, const SemanticGroupItem &row)
+            {
+                return sum + row.ehb->dataLen;
+            });
+    }
+
     const std::string getSemanticGroupsStr() const
     {
         std::string _ret;
-        int dataLen = 0;
+
         std::string constStr = "";
         if (isConst)
         {
@@ -110,7 +144,6 @@ public:
                 std::string rowPushback = std::format("_{}.push_back(std::ref({}));", tag, itemRefString);
                 _ret += rowPushback + "\n";
             }
-            dataLen = dataLen + row.ehb->dataLen;
         }
 
         std::string declarationEnd = std::format("const std::vector<std::reference_wrapper<{}{}>> {} = std::move(_{});",
