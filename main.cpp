@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <vector>
 #include <FlatLangConfig.h>
 #include "MyRealTimeLoop.h"
 
@@ -26,8 +26,9 @@ int main(int, char **)
     usedInputes.semanticGroups.emplace_back(i1);
     flatLangConfig.semanticGroups.emplace_back(usedInputes);
     
-    std::cout<<flatLangConfig.getConfig();
-
+    //std::cout<<flatLangConfig.getConfig();
+    gpio_in.signalPorts[2].aliases= std::vector<std::string>{"aa","bb"};
+    gpio_in.printAllAliases();
 
     std::vector<int> ins{4};
     std::vector<int> outs{4}; 
