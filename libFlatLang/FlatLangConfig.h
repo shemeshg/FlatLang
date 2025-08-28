@@ -1,21 +1,44 @@
 #include <iostream>
 #include <format>
+#include <ranges>
 
 // using json = nlohmann::json;
 
-
+class SignalPort
+{
+public:
+    std::vector<std::string> aliases{};
+};
 
 class ExternalHwBinding
 {
 public:
+    explicit ExternalHwBinding(std::string tag, std::string datatype, int dataLen, bool isConst) : tag{tag}, datatype{datatype}, dataLen{dataLen}, isConst{isConst},
+                                                                                                   signalPort(populateSignalPorts(dataLen))
+    {
+    }
     std::string tag = ".";
     std::string datatype = "int";
     bool isConst = true;
     int dataLen = 1;
     const std::string getDataTypeStr() const;
+    const std::vector<SignalPort> signalPort;
     bool isUnary()
     {
         return dataLen == 1;
+    }
+
+private:
+    std::vector<SignalPort> populateSignalPorts(int _dataLen)
+    {
+        std::vector<SignalPort> v;
+        for (auto i : std::views::iota(0, dataLen)) 
+        {            
+            SignalPort a;
+            v.emplace_back(a);
+        }
+
+        return v;
     }
 };
 
@@ -79,8 +102,6 @@ public:
 
         return _ret;
     }
-
-
 };
 
 class FlatLangConfig

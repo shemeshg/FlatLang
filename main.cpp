@@ -6,24 +6,13 @@
 int main(int, char **)
 {
     FlatLangConfig flatLangConfig;
-    ExternalHwBinding gpio_in;
-    gpio_in.tag = "gpio_in";
-    gpio_in.datatype = "int";
-    gpio_in.dataLen = 4;
-    gpio_in.isConst = true;
+    ExternalHwBinding gpio_in("gpio_in","int",4,  true);
     flatLangConfig.externalHwBindings.push_back(gpio_in);
 
-    ExternalHwBinding gpio_out;    
-    gpio_out.tag = "gpio_out";
-    gpio_out.datatype = "int";
-    gpio_out.dataLen = 4;    
-    gpio_out.isConst = false;
+    ExternalHwBinding gpio_out("gpio_out","int",4,  false);    
     flatLangConfig.externalHwBindings.push_back(gpio_out);
 
-    ExternalHwBinding tick_counter;
-    tick_counter.tag = "tick_counter";
-    tick_counter.isConst = true;
-    tick_counter.dataLen = 1;
+    ExternalHwBinding tick_counter("tick_counter","int",1,  true);
     flatLangConfig.externalHwBindings.push_back(tick_counter);
 
     

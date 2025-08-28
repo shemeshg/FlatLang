@@ -8,16 +8,6 @@ int add(int i, int j) {
 
 FlatLangConfig myTest(){
     FlatLangConfig flatLangConfig;
-    ExternalHwBinding ehb;
-    ehb.tag = "gpio_in";
-    ehb.datatype = "int";
-    ehb.dataLen = 4;
-    flatLangConfig.externalHwBindings.push_back(ehb);
-    ehb.tag = "gpio_out";
-    flatLangConfig.externalHwBindings.push_back(ehb);
-    ehb.tag = "tick_counter";
-    ehb.dataLen = 1;
-    flatLangConfig.externalHwBindings.push_back(ehb);
 
     return flatLangConfig;
 }
