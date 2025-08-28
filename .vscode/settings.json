@@ -71,6 +71,20 @@
         "unordered_set": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "atomic": "cpp",
+        "bit": "cpp",
+        "cerrno": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "exception": "cpp",
+        "iterator": "cpp",
+        "type_traits": "cpp",
+        "functional": "cpp",
+        "numeric": "cpp",
+        "ostream": "cpp",
+        "ranges": "cpp",
+        "thread": "cpp",
+        "tuple": "cpp"
     }
 }

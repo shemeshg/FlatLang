@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <FlatLangConfig.h>
-
+#include "MyRealTimeLoop.h"
 
 int main(int, char **)
 {
@@ -26,17 +26,25 @@ int main(int, char **)
     tick_counter.dataLen = 1;
     flatLangConfig.externalHwBindings.push_back(tick_counter);
 
-    std::cout<<flatLangConfig.getConfig();
-
+    
     SemanticGroup usedInputes;
+    usedInputes.tag = "usedInputs";
     SemanticGroupItem i0(&tick_counter);
     SemanticGroupItem i1(&gpio_in);
     i1.fromIdx =0;
     i1.toIdx = 2;
     usedInputes.semanticGroups.emplace_back(i0);
     usedInputes.semanticGroups.emplace_back(i1);
+    usedInputes.getSemanticGroupsStr();
+    //std::cout<<flatLangConfig.getConfig();
 
 
+    std::vector<int> ins{4};
+    std::vector<int> outs{4}; 
+    int tick;
+    myRealTimeLoop(std::span<const int, 4>(ins.data(), 4),
+                 std::span< int, 4>(outs.data(), 4), 
+                 tick);
      /*
     assume:
     # External hardware bindings
