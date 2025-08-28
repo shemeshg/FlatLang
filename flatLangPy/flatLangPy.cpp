@@ -27,6 +27,7 @@ PYBIND11_MODULE(flatLangPy, m, py::mod_gil_not_used()) {
 
     m.def("add", &add, "A function that adds two numbers");
 
+    /*
     py::class_<FlatLangConfig>(m, "FlatLangConfig")
     .def(py::init<>())
     .def("getConfig", &FlatLangConfig::getConfig)
@@ -44,9 +45,10 @@ PYBIND11_MODULE(flatLangPy, m, py::mod_gil_not_used()) {
                    "', datatype='" + ehb.datatype +
                    "', dataLen=" + std::to_string(ehb.dataLen) + ">";
         });
-
+    
 
     m.def("myTest", &myTest, "Returns a FlatLangConfig object");
+    */
 
 }
 
