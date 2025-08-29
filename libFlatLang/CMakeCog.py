@@ -28,6 +28,7 @@ def getCmake():
                                      'json',
                                      'nlohmann_json::nlohmann_json')]
 
+    s.append(cmc.add_fetchContent())
     s.append(cmc.add_library())
     s.append(cmc.target_link_libraries())
     s.append(cmc.target_compile_definitions())

@@ -192,11 +192,19 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS ${components} REQUIRED)
         t: Template = Template("""add_subdirectory(${folder})""")
         return "\n".join([t.substitute(folder=item.folder) for item in self.subdirectoryItem])
 
+    def add_fetchContent(self) ->str:
+        t: Template = Template("""
+FetchContent_Declare(${declare})
+FetchContent_MakeAvailable(${makeAvailable})                            
+""")
+        return "\n".join([t.substitute(declare=item.declare, makeAvailable=item.makeAvailable) for item in self.fetchContent])
+
     def target_link_libraries(self) -> str:
         libs: List[str] = []        
         t: Template = Template("""target_link_libraries(${exeName} PRIVATE ${libs}) """)        
         libs.extend(['Qt${QT_VERSION_MAJOR}::' + s for s in self.find_package_qt_components])
         libs.extend([itm.exeName for itm in self.subdirectoryItem])
+        libs.extend([itm.targetLink for itm in self.fetchContent])
         return t.substitute(exeName = self.exeName, 
                             libs = "\n".join(libs))
     

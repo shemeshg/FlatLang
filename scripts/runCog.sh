@@ -14,7 +14,7 @@ fi
 
 cd "$script_dir/.."
 cd libFlatLang
-#cog -r CMakeLists.txt
-cog -r Test.txt
+cog -r CMakeLists.txt
+
 
 
