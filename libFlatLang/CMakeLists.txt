@@ -12,7 +12,7 @@ make_directory(${CMAKE_CURRENT_BINARY_DIR}/genPrpt)
 
     set(HPP_GEN_FILES
         ${CMAKE_SOURCE_DIR}/scripts/hppTemplates.txt
-        
+        ${CMAKE_CURRENT_SOURCE_DIR}/hpp/FlatLangConfig.hpp
     )
     add_custom_target(runScript_fd2865362298c5d64e5b21b59b88f05282db5158918520af2478cd2659e47cbd ALL
         COMMAND python3 ${CMAKE_SOURCE_DIR}/scripts/parseHpp.py ${HPP_GEN_FILES}
@@ -40,14 +40,14 @@ FetchContent_MakeAvailable(json)
 
 
 add_library(libFlatLang STATIC
-  FlatLangConfig.h
-FlatLangConfig.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/GenHpp/FlatLangConfig.cpp
+${CMAKE_CURRENT_BINARY_DIR}/GenHpp/FlatLangConfig.h
 )        
                      
 target_link_libraries(libFlatLang PRIVATE nlohmann_json::nlohmann_json) 
 target_compile_definitions(libFlatLang PRIVATE LIBFLATLANG_LIBRARY) 
 
-target_include_directories(libFlatLang PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})                     
+target_include_directories(libFlatLang PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/GenHpp)                     
         
 
 if(GEN_HPP)

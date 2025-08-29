@@ -85,6 +85,7 @@
         "ostream": "cpp",
         "ranges": "cpp",
         "thread": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "*.old": "cpp"
     }
 }

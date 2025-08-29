@@ -34,7 +34,7 @@ def getCmake():
     s.append(cmc.target_compile_definitions())
 
     cmc.targetIncludeDirs = [
-        '${CMAKE_CURRENT_SOURCE_DIR}'
+        '${CMAKE_CURRENT_BINARY_DIR}/GenHpp'
     
                          ]
     s.append(cmc.target_include_directories())
