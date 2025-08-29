@@ -3,16 +3,9 @@
 
 //-only-file header //-
 #pragma once
-#include<vector>
-#include<string>
+#include <vector>
+#include <string>
 //-only-file body //-
-//#include <iostream>
-//#include <format>
-//#include <ranges>
-//#include <sstream>
-//#include <numeric>
-
-
 #include <inja.hpp>
 //- #include "FlatLangConfig.h"
 
@@ -30,9 +23,9 @@ class ExternalHwBinding
 {
 public:
     //- {function} 1 1
-    explicit ExternalHwBinding(std::string tag, std::string datatype, int dataLen, bool isConst) 
-    //-only-file body
-    :tag{tag}, datatype{datatype}, dataLen{dataLen}, isConst{isConst},  signalPorts(populateSignalPorts(dataLen))
+    explicit ExternalHwBinding(std::string tag, std::string datatype, int dataLen, bool isConst)
+        //-only-file body
+        : tag{tag}, datatype{datatype}, dataLen{dataLen}, isConst{isConst}, signalPorts(populateSignalPorts(dataLen))
     {
     }
     //-only-file header
@@ -113,9 +106,9 @@ class SemanticGroupItem
 {
 public:
     //- {function} 1 1
-    explicit SemanticGroupItem(ExternalHwBinding *ehb) 
-    //-only-file body
-    : ehb{ehb}
+    explicit SemanticGroupItem(ExternalHwBinding *ehb)
+        //-only-file body
+        : ehb{ehb}
     {
         if (ehb->dataLen != 1)
         {
