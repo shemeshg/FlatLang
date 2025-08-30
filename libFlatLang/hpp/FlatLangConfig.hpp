@@ -39,24 +39,18 @@ public:
     std::vector<ExternalHwBindingItem> signalPorts;
 
     //- {function} 0 2
-    const std::string getDataTypeStr() const
+    const nlohmann::json getTemplateObj() const
     //-only-file body
     {
-        std::string isConstStr;
-        if (isConst)
-        {
-            isConstStr = "const";
-        }
-        if (dataLen == 1)
-        {
-            return isConstStr + " " + datatype + "&";
-        }
-        else
-        {
-
-            return std::format("std::span<{} {},{}>", isConstStr, datatype, dataLen);
-        }
+        nlohmann::json declarationJson = nlohmann::json::object({});
+        declarationJson["isConst"] = isConst;
+        declarationJson["datatype"] = datatype;
+        declarationJson["dataLen"] = dataLen;
+        declarationJson["tag"] = tag;
+                
+        return declarationJson;
     }
+
 
     //- {fn}
     void printAllAliases()
@@ -230,17 +224,19 @@ public:
         data["externalParams"] = nlohmann::json::array({});
         for (auto const &row : externalHwBindings)
         {
-            data["externalParams"].push_back({{"name", row.tag},
-                                      {"datatype", row.getDataTypeStr()}});
+            data["externalParams"].push_back(row.getTemplateObj());
         }        
             
 
         std::string configTemplate = R"(
     #include <span>
 
-    void myRealTimeLoop(
-    {%- for var in externalParams -%}   
-     {{ var.datatype }} {{ var.name }}{% if not loop.is_last %},{% endif %}    
+    void myRealTimeLoop({%- for var in externalParams -%} 
+      {%- if var.dataLen == 1 -%}
+      {%- if var.isConst -%}const {%- endif -%} {{ var.datatype }} &{%- else -%}
+      std::span<{%- if var.isConst %}const {% endif -%} {{ var.datatype }},{{ var.dataLen }}> 
+      {%- endif -%}      
+      {{ var.tag }}{%- if not loop.is_last -%},{%-endif %}    
     {%- endfor -%}
     ) {
         {%- for var in semanticGroups -%}  
