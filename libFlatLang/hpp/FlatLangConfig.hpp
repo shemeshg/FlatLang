@@ -175,18 +175,7 @@ public:
             });
     }
 
-    //- {function} 0 2
-    const std::string getTemplateStr() const
-    //-only-file body
-    {
-        return R"(
-std::vector<std::reference_wrapper<{% if isConst %}const {% endif %} {{datatype}}>> _{{tag}}{};
- {%- for item in items -%} 
-_{{tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %} {{ item.tag}} [ {{item.index}}] {% endif %}  ));
- {%- endfor -%}
- const std::vector<std::reference_wrapper<{% if isConst %}const {% endif %} {{datatype}}>> {{tag}} = std::move(_{{tag}});
-)";
-    }
+
 
     //- {function} 0 2
     const nlohmann::json getTemplateObj() const
@@ -214,17 +203,6 @@ _{{tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %} {{
         return declarationJson;
     }
 
-    //- {function} 0 2
-    const std::string getSemanticGroupsStr() const
-    //-only-file body
-    {
-        std::string _ret;
-
-        std::string t = getTemplateStr();
-
-        inja::Environment env;
-        return env.render(t, getTemplateObj());
-    }
 
     //-only-file header
 };
@@ -242,23 +220,22 @@ public:
     //-only-file body
     {
         nlohmann::json data;
-        std::string semanticGroupsStr;
+        data["semanticGroups"] = nlohmann::json::array({});
         for (auto const &row : semanticGroups)
         {
-            semanticGroupsStr += row.getSemanticGroupsStr();
+            data["semanticGroups"].push_back(row.getTemplateObj());
         }
-        data["semanticGroupsStr"] = semanticGroupsStr;
-
-        nlohmann::json externalParams = nlohmann::json::array({});
-        for (auto const &row : externalHwBindings)
-        {
-            externalParams.push_back({{"name", row.tag},
-                                      {"datatype", row.getDataTypeStr()}});
-        }        
-        data["externalParams"] = externalParams;
         
 
-        std::string t = R"(
+        data["externalParams"] = nlohmann::json::array({});
+        for (auto const &row : externalHwBindings)
+        {
+            data["externalParams"].push_back({{"name", row.tag},
+                                      {"datatype", row.getDataTypeStr()}});
+        }        
+            
+
+        std::string configTemplate = R"(
     #include <span>
 
     void myRealTimeLoop(
@@ -266,15 +243,25 @@ public:
      {{ var.datatype }} {{ var.name }}{% if not loop.is_last %},{% endif %}    
     {%- endfor -%}
     ) {
+        {%- for var in semanticGroups -%}  
         {%- include "impl" -%}
-    }
+        {%- endfor -%}
+    }   
     )";
 
+        std::string semanticGroupTemplate =  R"(
+std::vector<std::reference_wrapper<{% if var.isConst %}const {% endif %} {{var.datatype}}>> _{{var.tag}}{};
+ {%- for item in var.items -%} 
+_{{var.tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %} {{ item.tag}} [ {{item.index}}] {% endif %}  ));
+ {%- endfor -%}
+ const std::vector<std::reference_wrapper<{% if var.isConst %}const {% endif %} {{var.datatype}}>> {{var.tag}} = std::move(_{{var.tag}});
+)";
+        
         inja::Environment env;
-        inja::Template implTemplate = env.parse("{{semanticGroupsStr}}");
+        inja::Template implTemplate = env.parse(semanticGroupTemplate);
         env.include_template("impl", implTemplate);
 
-        return env.render(t, data);
+        return env.render(configTemplate, data);
     }
     //-only-file header
 };
