@@ -246,6 +246,7 @@ public:
 
         nlohmann::json data;
         data["externalParams"] = externalParams;
+        data["semanticGroupsStr"] = semanticGroupsStr;
 
         std::string t = R"(
     #include <span>
@@ -260,7 +261,7 @@ public:
     )";
 
         inja::Environment env;
-        inja::Template implTemplate = env.parse("    // Implementation goes here \n" + semanticGroupsStr);
+        inja::Template implTemplate = env.parse("{{semanticGroupsStr}}");
         env.include_template("impl", implTemplate);
 
 
