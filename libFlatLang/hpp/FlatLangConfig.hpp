@@ -244,11 +244,14 @@ public:
                                       {"datatype", row.getDataTypeStr()}});
         }
 
+        nlohmann::json data;
+        data["externalParams"] = externalParams;
+
         std::string t = R"(
     #include <span>
 
     void myRealTimeLoop(
-    {%- for var in params -%}   
+    {%- for var in externalParams -%}   
      {{ var.datatype }} {{ var.name }}{% if not loop.is_last %},{% endif %}    
     {%- endfor -%}
     ) {
@@ -260,8 +263,7 @@ public:
         inja::Template implTemplate = env.parse("    // Implementation goes here \n" + semanticGroupsStr);
         env.include_template("impl", implTemplate);
 
-        nlohmann::json data;
-        data["params"] = externalParams;
+
 
         return env.render(t, data);
     }
