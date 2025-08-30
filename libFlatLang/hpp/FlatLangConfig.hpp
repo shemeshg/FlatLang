@@ -178,44 +178,38 @@ public:
     {
         std::string _ret;
 
-        std::string constStr = "";
-        if (isConst)
-        {
-            constStr = "const ";
-        }
         std::string t = R"(
-std::vector<std::reference_wrapper<{% if isConst %}const {% endif %} {{datatype}}>> _{{tag}}{};\n";
+std::vector<std::reference_wrapper<{% if isConst %}const {% endif %} {{datatype}}>> _{{tag}}{};
+ {%- for item in items -%} 
+_{{tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %} {{ item.tag}} [ {{item.index}}] {% endif %}  ));
+ {%- endfor -%}
+ const std::vector<std::reference_wrapper<{% if isConst %}const {% endif %} {{datatype}}>> {{tag}} = std::move(_{{tag}});
 )";
         nlohmann::json declarationJson = nlohmann::json::object({});
         
         declarationJson["datatype"] = datatype;
         declarationJson["tag"] = tag;
         declarationJson["isConst"]  = isConst;
+        declarationJson["items"] = nlohmann::json::array({});
         inja::Environment env;
         
 
-        std::string declaration = env.render(t, declarationJson);
-        _ret += declaration + "\n";
         for (const auto &row : semanticGroups)
         {
 
             for (int i = row.fromIdx; i <= row.toIdx; i++)
             {
-                std::string itemRefString = std::format("{}[{}]", row.ehb->tag, i);
-                if (row.ehb->isUnary())
-                {
-                    itemRefString = row.ehb->tag;
-                }
-                std::string rowPushback = std::format("_{}.push_back(std::ref({}));", tag, itemRefString);
-                _ret += rowPushback + "\n";
+                nlohmann::json item = nlohmann::json::object({});
+                item["tag"] = row.ehb->tag;
+                item["index"] = i;
+                item["isUnary"] = row.ehb->isUnary();
+                declarationJson["items"].push_back(item);
             }
         }
 
-        std::string declarationEnd = std::format("const std::vector<std::reference_wrapper<{}{}>> {} = std::move(_{});",
-                                                 constStr, datatype, tag, tag);
-        _ret += declarationEnd + "\n";
 
-        return _ret;
+
+        return  env.render(t, declarationJson);
     }
 
     //-only-file header
@@ -251,11 +245,11 @@ public:
     #include <span>
 
     void myRealTimeLoop(
-    {% for var in params %}   
+    {%- for var in params -%}   
      {{ var.datatype }} {{ var.name }}{% if not loop.is_last %},{% endif %}    
-    {% endfor %}
+    {%- endfor -%}
     ) {
-        {% include "impl" %}
+        {%- include "impl" -%}
     }
     )";
 
