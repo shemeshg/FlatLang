@@ -183,7 +183,18 @@ public:
         {
             constStr = "const ";
         }
-        std::string declaration = std::format("std::vector<std::reference_wrapper<{}{}>> _{};", constStr, datatype, tag);
+        std::string t = R"(
+std::vector<std::reference_wrapper<{% if isConst %}const {% endif %} {{datatype}}>> _{{tag}}{};\n";
+)";
+        nlohmann::json declarationJson = nlohmann::json::object({});
+        
+        declarationJson["datatype"] = datatype;
+        declarationJson["tag"] = tag;
+        declarationJson["isConst"]  = isConst;
+        inja::Environment env;
+        
+
+        std::string declaration = env.render(t, declarationJson);
         _ret += declaration + "\n";
         for (const auto &row : semanticGroups)
         {
