@@ -204,7 +204,7 @@ FetchContent_MakeAvailable(${makeAvailable})
         t: Template = Template("""target_link_libraries(${exeName} PRIVATE ${libs}) """)        
         libs.extend(['Qt${QT_VERSION_MAJOR}::' + s for s in self.find_package_qt_components])
         libs.extend([itm.exeName for itm in self.subdirectoryItem])
-        libs.extend([itm.targetLink for itm in self.fetchContent])
+        #libs.extend([itm.targetLink for itm in self.fetchContent])
         return t.substitute(exeName = self.exeName, 
                             libs = "\n".join(libs))
     

@@ -30,6 +30,9 @@ def getCmake():
 
     s.append(cmc.add_fetchContent())
     s.append(cmc.add_library())
+    # BUG  it must be public
+    s.append("""target_link_libraries(libFlatLang PUBLIC nlohmann_json::nlohmann_json)
+    """)
     s.append(cmc.target_link_libraries())
     s.append(cmc.target_compile_definitions())
 

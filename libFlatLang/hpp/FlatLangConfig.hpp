@@ -5,8 +5,11 @@
 #pragma once
 #include <vector>
 #include <string>
+
+#include <nlohmann/json.hpp>
 //-only-file body //-
 #include <inja.hpp>
+
 //- #include "FlatLangConfig.h"
 
 //-only-file header

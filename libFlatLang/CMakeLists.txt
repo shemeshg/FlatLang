@@ -44,7 +44,9 @@ add_library(libFlatLang STATIC
 ${CMAKE_CURRENT_BINARY_DIR}/GenHpp/FlatLangConfig.h
 )        
                      
-target_link_libraries(libFlatLang PRIVATE nlohmann_json::nlohmann_json) 
+target_link_libraries(libFlatLang PUBLIC nlohmann_json::nlohmann_json)
+    
+target_link_libraries(libFlatLang PRIVATE ) 
 target_compile_definitions(libFlatLang PRIVATE LIBFLATLANG_LIBRARY) 
 
 target_include_directories(libFlatLang PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/GenHpp)                     

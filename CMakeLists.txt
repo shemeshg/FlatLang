@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(FetchContent)
-
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
+FetchContent_MakeAvailable(json)     
 
 
 include_directories(${PROJECT_SOURCE_DIR}/external/inja/include/inja)
@@ -18,5 +19,5 @@ pybind11_add_module(flatLangPy flatLangPy/flatLangPy.cpp)
 target_link_libraries(flatLangPy PRIVATE libFlatLang)
 
 add_executable(FlatLang main.cpp)
-target_link_libraries(FlatLang PRIVATE libFlatLang)
+target_link_libraries(FlatLang PRIVATE nlohmann_json::nlohmann_json libFlatLang)
 
