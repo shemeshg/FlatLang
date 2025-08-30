@@ -176,26 +176,28 @@ public:
     }
 
     //- {function} 0 2
-    const std::string getSemanticGroupsStr() const
+    const std::string getTemplateStr() const
     //-only-file body
     {
-        std::string _ret;
-
-        std::string t = R"(
+        return R"(
 std::vector<std::reference_wrapper<{% if isConst %}const {% endif %} {{datatype}}>> _{{tag}}{};
  {%- for item in items -%} 
 _{{tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %} {{ item.tag}} [ {{item.index}}] {% endif %}  ));
  {%- endfor -%}
  const std::vector<std::reference_wrapper<{% if isConst %}const {% endif %} {{datatype}}>> {{tag}} = std::move(_{{tag}});
 )";
+    }
+
+    //- {function} 0 2
+    const nlohmann::json getTemplateObj() const
+    //-only-file body
+    {
         nlohmann::json declarationJson = nlohmann::json::object({});
-        
+
         declarationJson["datatype"] = datatype;
         declarationJson["tag"] = tag;
-        declarationJson["isConst"]  = isConst;
+        declarationJson["isConst"] = isConst;
         declarationJson["items"] = nlohmann::json::array({});
-        inja::Environment env;
-        
 
         for (const auto &row : semanticGroups)
         {
@@ -209,10 +211,19 @@ _{{tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %} {{
                 declarationJson["items"].push_back(item);
             }
         }
+        return declarationJson;
+    }
 
+    //- {function} 0 2
+    const std::string getSemanticGroupsStr() const
+    //-only-file body
+    {
+        std::string _ret;
 
+        std::string t = getTemplateStr();
 
-        return  env.render(t, declarationJson);
+        inja::Environment env;
+        return env.render(t, getTemplateObj());
     }
 
     //-only-file header
@@ -230,23 +241,22 @@ public:
     std::string getConfig()
     //-only-file body
     {
+        nlohmann::json data;
         std::string semanticGroupsStr;
         for (auto const &row : semanticGroups)
         {
             semanticGroupsStr += row.getSemanticGroupsStr();
         }
+        data["semanticGroupsStr"] = semanticGroupsStr;
 
         nlohmann::json externalParams = nlohmann::json::array({});
-
         for (auto const &row : externalHwBindings)
         {
             externalParams.push_back({{"name", row.tag},
                                       {"datatype", row.getDataTypeStr()}});
-        }
-
-        nlohmann::json data;
+        }        
         data["externalParams"] = externalParams;
-        data["semanticGroupsStr"] = semanticGroupsStr;
+        
 
         std::string t = R"(
     #include <span>
@@ -263,8 +273,6 @@ public:
         inja::Environment env;
         inja::Template implTemplate = env.parse("{{semanticGroupsStr}}");
         env.include_template("impl", implTemplate);
-
-
 
         return env.render(t, data);
     }
