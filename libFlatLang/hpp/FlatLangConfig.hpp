@@ -29,15 +29,13 @@ class SemanticNode
 };
 
 //-only-file header
-//-var {PRE} "FixedValue::"
+//-var {PRE} "template<typename T>FixedValue<T>::"
 template<typename T>
 class FixedValue: public SemanticNode {
     public:
-    //-only-file header ;
-    explicit FixedValue<T>(const T& value) 
-    //-only-file body //-   
-    //- template<typename T>
-    //- FixedValue<T>::FixedValue(const T& value) 
+    //- {function} 1 1
+    explicit FixedValue(const T& value) 
+    //-only-file body
     : val(value)    
     {
         // Constructor body (if needed)
