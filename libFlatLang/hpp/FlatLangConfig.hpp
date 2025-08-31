@@ -24,34 +24,41 @@ public:
 //-var {PRE} "SemanticNode::"
 class SemanticNode
 {
-    public:
-    explicit SemanticNode(const std::string& tag):tag{tag}{}
+public:
+    explicit SemanticNode(const std::string &datatype, const std::string &tag) : tag{tag} {}
     virtual const nlohmann::json getTemplateObj() const = 0;
+    virtual const std::string getTemplateStr() const = 0;
     const std::string tag;
+    const std::string datatype;
 };
 
 //-only-file header
-template<typename T>
-class FixedValue: public SemanticNode {
-    public:    
-    explicit FixedValue(const std::string& tag, const T& value) 
-    : SemanticNode(tag), val(value)    
+class FixedValue : public SemanticNode
+{
+public:
+    explicit FixedValue(const std::string &tag, const std::string &datatype, const std::string &value)
+        : SemanticNode(tag, datatype), val(value)
     {
     }
 
-   
+    const std::string getTemplateStr() const override
+    {
+        std::string str = R"( 
+                
+         )";
+    }
+
     const nlohmann::json getTemplateObj() const override
     {
         nlohmann::json json = nlohmann::json::object({});
         json["tag"] = tag;
+        json["val"] = val;
         return json;
-
     }
 
     //-only-file header
-    private:
-    const T val;
-
+private:
+    const std::string val;
 };
 
 //-only-file header
@@ -81,10 +88,9 @@ public:
         declarationJson["datatype"] = datatype;
         declarationJson["dataLen"] = dataLen;
         declarationJson["tag"] = tag;
-                
+
         return declarationJson;
     }
-
 
     //- {fn}
     void printAllAliases()
@@ -203,8 +209,6 @@ public:
             });
     }
 
-
-
     //- {function} 0 2
     const nlohmann::json getTemplateObj() const
     //-only-file body
@@ -231,7 +235,6 @@ public:
         return declarationJson;
     }
 
-
     //-only-file header
 };
 
@@ -253,14 +256,12 @@ public:
         {
             data["semanticGroups"].push_back(row.getTemplateObj());
         }
-        
 
         data["externalParams"] = nlohmann::json::array({});
         for (auto const &row : externalHwBindings)
         {
             data["externalParams"].push_back(row.getTemplateObj());
-        }        
-            
+        }
 
         std::string configTemplate = R"(
     #include <span>
@@ -279,14 +280,14 @@ public:
     }   
     )";
 
-        std::string semanticGroupTemplate =  R"(
+        std::string semanticGroupTemplate = R"(
 std::vector<std::reference_wrapper<{% if var.isConst %}const {% endif %} {{var.datatype}}>> _{{var.tag}}{};
  {%- for item in var.items -%} 
 _{{var.tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %} {{ item.tag}} [ {{item.index}}] {% endif %}  ));
  {%- endfor -%}
  const std::vector<std::reference_wrapper<{% if var.isConst %}const {% endif %} {{var.datatype}}>> {{var.tag}} = std::move(_{{var.tag}});
 )";
-        
+
         inja::Environment env;
         inja::Template implTemplate = env.parse(semanticGroupTemplate);
         env.include_template("implTemplate", implTemplate);
