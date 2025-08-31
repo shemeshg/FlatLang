@@ -21,6 +21,35 @@ public:
 };
 
 //-only-file header
+//-var {PRE} "SemanticNode::"
+class SemanticNode
+{
+    public:
+    //THIS WILL BE SEMANTIC NODE
+};
+
+//-only-file header
+//-var {PRE} "FixedValue::"
+template<typename T>
+class FixedValue: public SemanticNode {
+    public:
+    //-only-file header ;
+    explicit FixedValue<T>(const T& value) 
+    //-only-file body //-   
+    //- template<typename T>
+    //- FixedValue<T>::FixedValue(const T& value) 
+    : val(value)    
+    {
+        // Constructor body (if needed)
+    }
+
+    //-only-file header
+    private:
+    const T val;
+
+};
+
+//-only-file header
 //-var {PRE} "ExternalHwBinding::"
 class ExternalHwBinding
 {
@@ -240,7 +269,7 @@ public:
     {%- endfor -%}
     ) {
         {%- for var in semanticGroups -%}  
-        {%- include "impl" -%}
+        {%- include "implTemplate" -%}
         {%- endfor -%}
     }   
     )";
@@ -255,7 +284,7 @@ _{{var.tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %
         
         inja::Environment env;
         inja::Template implTemplate = env.parse(semanticGroupTemplate);
-        env.include_template("impl", implTemplate);
+        env.include_template("implTemplate", implTemplate);
 
         return env.render(configTemplate, data);
     }
