@@ -25,20 +25,27 @@ public:
 class SemanticNode
 {
     public:
-    //THIS WILL BE SEMANTIC NODE
+    explicit SemanticNode(const std::string& tag):tag{tag}{}
+    virtual const nlohmann::json getTemplateObj() const = 0;
+    const std::string tag;
 };
 
 //-only-file header
-//-var {PRE} "template<typename T>FixedValue<T>::"
 template<typename T>
 class FixedValue: public SemanticNode {
-    public:
-    //- {function} 1 1
-    explicit FixedValue(const T& value) 
-    //-only-file body
-    : val(value)    
+    public:    
+    explicit FixedValue(const std::string& tag, const T& value) 
+    : SemanticNode(tag), val(value)    
     {
-        // Constructor body (if needed)
+    }
+
+   
+    const nlohmann::json getTemplateObj() const override
+    {
+        nlohmann::json json = nlohmann::json::object({});
+        json["tag"] = tag;
+        return json;
+
     }
 
     //-only-file header
