@@ -25,9 +25,10 @@ public:
 class SemanticNode
 {
 public:
-    explicit SemanticNode(const std::string &datatype, const std::string &tag) : tag{tag} {}
+    explicit SemanticNode(const std::string &tag ,
+                          const std::string &datatype) : tag{tag},datatype{datatype} {}
     virtual const nlohmann::json getTemplateObj() const = 0;
-    virtual const std::string getTemplateStr() const = 0;
+
     const std::string tag;
     const std::string datatype;
     virtual ~SemanticNode() = default;
@@ -40,14 +41,14 @@ public:
     explicit FixedValue(const std::string &tag,
                         const std::string &datatype,
                         const std::string &val)
-        : SemanticNode(tag, datatype), val{val}
+        : SemanticNode(tag, datatype ), val{val}
     {
     }
 
-    const std::string getTemplateStr() const override
+    static const std::string getTemplateStr()
     {
         std::string str = R"( 
-        const {{datatype}} {{tag}} = {{val}};
+        const {{var.datatype}} {{var.tag}} = {{var.val}};
          )";
 
         return str;
@@ -56,6 +57,7 @@ public:
     const nlohmann::json getTemplateObj() const override
     {
         nlohmann::json json = nlohmann::json::object({});
+        json["datatype"] = datatype;
         json["tag"] = tag;
         json["val"] = val;
         return json;
@@ -259,13 +261,11 @@ public:
         nlohmann::json data;
 
         data["semanticNodes"] = nlohmann::json::array({});
-
-        /*
         for (auto const &row : semanticNodes)
         {
-            //data["semanticNodes"].push_back(row->getTemplateObj());
+            data["semanticNodes"].push_back(row->getTemplateObj());
         }
-        */
+
 
         data["semanticGroups"] = nlohmann::json::array({});
         for (auto const &row : semanticGroups)
@@ -293,6 +293,10 @@ public:
         {%- for var in semanticGroups -%}  
         {%- include "semanticGroupsTemplate" -%}
         {%- endfor -%}
+        {%- for var in semanticNodes -%}
+        {%- include "semanticNodesTemplate" -%}
+        {%- endfor -%}
+
     }   
     )";
 
@@ -305,8 +309,12 @@ _{{var.tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %
 )";
 
         inja::Environment env;
+
         inja::Template semanticGroupsTemplate = env.parse(semanticGroupTemplate);
         env.include_template("semanticGroupsTemplate", semanticGroupsTemplate);
+
+        inja::Template semanticNodesTemplate = env.parse(FixedValue::getTemplateStr());
+        env.include_template("semanticNodesTemplate", semanticNodesTemplate);
 
         return env.render(configTemplate, data);
     }

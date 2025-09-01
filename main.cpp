@@ -29,9 +29,9 @@ int main(int, char **)
     usedInputes.semanticGroups.emplace_back(i0);
     usedInputes.semanticGroups.emplace_back(i1);
     flatLangConfig.semanticGroups.emplace_back(usedInputes);
-
     
     std::cout<<flatLangConfig.getConfig();
+
     //gpio_in.signalPorts[1].aliases= std::vector<std::string>{"aa","bb"};
     //gpio_in.printAllAliases();
     //usedInputes.printAllAliases();
