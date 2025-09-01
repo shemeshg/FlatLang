@@ -15,6 +15,10 @@ int main(int, char **)
     ExternalHwBinding tick_counter("tick_counter","int",1,  true);
     flatLangConfig.externalHwBindings.push_back(tick_counter);
 
+
+    flatLangConfig.semanticNodes.emplace_back(std::make_unique<FixedValue>("cTrue", "bool", "true"));
+    flatLangConfig.semanticNodes.emplace_back(std::make_unique<FixedValue>("cFalse", "bool", "false"));
+
     
     SemanticGroup usedInputes;
     usedInputes.tag = "usedInputs";
@@ -25,7 +29,7 @@ int main(int, char **)
     usedInputes.semanticGroups.emplace_back(i0);
     usedInputes.semanticGroups.emplace_back(i1);
     flatLangConfig.semanticGroups.emplace_back(usedInputes);
-    FixedValue const_on{"const_on", "int", "1"};
+
     
     std::cout<<flatLangConfig.getConfig();
     //gpio_in.signalPorts[1].aliases= std::vector<std::string>{"aa","bb"};
@@ -39,6 +43,9 @@ int main(int, char **)
     myRealTimeLoop(std::span<const int, 4>(ins.data(), 4),
                  std::span< int, 4>(outs.data(), 4), 
                  tick);
+
+    const int v_false = false;
+    const int v_true = true;
      /*
     assume:
     # External hardware bindings

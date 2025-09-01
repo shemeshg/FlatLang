@@ -30,22 +30,27 @@ public:
     virtual const std::string getTemplateStr() const = 0;
     const std::string tag;
     const std::string datatype;
+    virtual ~SemanticNode() = default;
 };
 
 //-only-file header
 class FixedValue : public SemanticNode
 {
 public:
-    explicit FixedValue(const std::string &tag, const std::string &datatype, const std::string &value)
-        : SemanticNode(tag, datatype), val(value)
+    explicit FixedValue(const std::string &tag,
+                        const std::string &datatype,
+                        const std::string &val)
+        : SemanticNode(tag, datatype), val{val}
     {
     }
 
     const std::string getTemplateStr() const override
     {
         std::string str = R"( 
-                
+        const {{datatype}} {{tag}} = {{val}};
          )";
+
+        return str;
     }
 
     const nlohmann::json getTemplateObj() const override
@@ -245,12 +250,23 @@ class FlatLangConfig
 public:
     std::vector<ExternalHwBinding> externalHwBindings;
     std::vector<SemanticGroup> semanticGroups;
+    std::vector<std::unique_ptr<SemanticNode>> semanticNodes;
 
     //- {fn}
     std::string getConfig()
     //-only-file body
     {
         nlohmann::json data;
+
+        data["semanticNodes"] = nlohmann::json::array({});
+
+        /*
+        for (auto const &row : semanticNodes)
+        {
+            //data["semanticNodes"].push_back(row->getTemplateObj());
+        }
+        */
+
         data["semanticGroups"] = nlohmann::json::array({});
         for (auto const &row : semanticGroups)
         {
@@ -275,7 +291,7 @@ public:
     {%- endfor -%}
     ) {
         {%- for var in semanticGroups -%}  
-        {%- include "implTemplate" -%}
+        {%- include "semanticGroupsTemplate" -%}
         {%- endfor -%}
     }   
     )";
@@ -289,8 +305,8 @@ _{{var.tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %
 )";
 
         inja::Environment env;
-        inja::Template implTemplate = env.parse(semanticGroupTemplate);
-        env.include_template("implTemplate", implTemplate);
+        inja::Template semanticGroupsTemplate = env.parse(semanticGroupTemplate);
+        env.include_template("semanticGroupsTemplate", semanticGroupsTemplate);
 
         return env.render(configTemplate, data);
     }
