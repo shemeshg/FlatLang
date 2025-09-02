@@ -17,8 +17,7 @@ int main(int, char **)
 
 
     flatLangConfig.semanticNodes.emplace_back(std::make_unique<FixedValue>("cTrue", "bool", "true"));
-    flatLangConfig.semanticNodes.emplace_back(std::make_unique<FixedValue>("cFalse", "bool", "false"));
-    flatLangConfig.semanticNodes.emplace_back(std::make_unique<LogicalGateAnd>("thisIsAnd", "true", "true"));
+    flatLangConfig.semanticNodes.emplace_back(std::make_unique<FixedValue>("cFalse", "bool", "false"));    
 
     
     SemanticGroup usedInputes;
