@@ -35,17 +35,22 @@ public:
 };
 
 //-only-file header
+//-var {PRE} "FixedValue::"
 class FixedValue : public SemanticNode
 {
 public:
+    //- {function} 1 1
     explicit FixedValue(const std::string &tag,
                         const std::string &datatype,
                         const std::string &val)
+        //-only-file body
         : SemanticNode(tag, datatype ), val{val}
     {
     }
 
+    //- {function} 1 3
     static const std::string getTemplateStr()
+    //-only-file body
     {
         std::string str = R"( 
         const {{var.datatype}} {{var.tag}} = {{var.val}};
@@ -54,7 +59,9 @@ public:
         return str;
     }
 
+    //- {function} 0 2
     const nlohmann::json getTemplateObj() const override
+    //-only-file body
     {
         nlohmann::json json = nlohmann::json::object({});
         json["datatype"] = datatype;
