@@ -15,9 +15,13 @@ int main(int, char **)
     ExternalHwBinding tick_counter("tick_counter","int",1,  true);
     flatLangConfig.externalHwBindings.push_back(tick_counter);
 
-
-    flatLangConfig.semanticNodes.emplace_back(std::make_unique<FixedValue>("cTrue", "bool", "true"));
-    flatLangConfig.semanticNodes.emplace_back(std::make_unique<FixedValue>("cFalse", "bool", "false"));    
+    auto cTrue = std::make_unique<FixedValue>("cTrue", "bool", "true");
+    auto cFalse = std::make_unique<FixedValue>("cFalse", "bool", "false");
+    flatLangConfig.semanticNodes.push_back(cTrue.get());
+    flatLangConfig.semanticNodes.push_back(cFalse.get());
+    auto thisIsAnd = std::make_unique<LogicalGateAnd>("thisIsAnd", cTrue->tag, cFalse->tag);
+    
+    flatLangConfig.semanticNodes.push_back(thisIsAnd.get());
 
     
     SemanticGroup usedInputes;
