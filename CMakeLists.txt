@@ -18,6 +18,9 @@ add_subdirectory(external/pybind11)
 pybind11_add_module(flatLangPy flatLangPy/flatLangPy.cpp)
 target_link_libraries(flatLangPy PRIVATE libFlatLang)
 
+enable_testing()
+add_subdirectory(test)
+
 add_executable(FlatLang main.cpp)
 target_link_libraries(FlatLang PRIVATE nlohmann_json::nlohmann_json libFlatLang)
 

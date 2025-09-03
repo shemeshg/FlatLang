@@ -219,7 +219,7 @@ private:
     //-only-file body
     {
         std::string str = R"(
-        const {{var.datatype}} {{var.tag}} =  ({{val1}} || {{val2}}) && !({{val1}} && {{val2}})  ;
+        const {{var.datatype}} {{var.tag}} =  {{val1}} ^ {{val2}}  ;
          )";
 
         return str;
