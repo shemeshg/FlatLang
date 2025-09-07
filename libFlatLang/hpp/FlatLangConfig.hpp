@@ -18,6 +18,7 @@ class ExternalHwBindingItem
 {
 public:
     std::vector<std::string> aliases{};
+    std::string tag;
 };
 
 //-only-file header
@@ -354,6 +355,7 @@ private:
         for (auto i : std::views::iota(0, dataLen))
         {
             ExternalHwBindingItem a;
+            a.tag = tag + "[" + std::to_string(i) +"]";
             v.emplace_back(a);
         }
 

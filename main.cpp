@@ -19,7 +19,7 @@ int main(int, char **)
     auto cFalse = std::make_unique<FixedValue>("cFalse", "bool", "false");
     flatLangConfig.semanticNodes.push_back(cTrue.get());
     flatLangConfig.semanticNodes.push_back(cFalse.get());
-    auto thisIsAnd = std::make_unique<LogicalGateAnd>("thisIsAnd", cTrue->tag, cFalse->tag);
+    auto thisIsAnd = std::make_unique<LogicalGateAnd>(gpio_out.signalPorts.at(0).tag, gpio_in.signalPorts.at(0).tag, gpio_in.signalPorts.at(1).tag);
     
     flatLangConfig.semanticNodes.push_back(thisIsAnd.get());
 

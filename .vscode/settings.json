@@ -86,6 +86,7 @@
         "ranges": "cpp",
         "thread": "cpp",
         "tuple": "cpp",
-        "*.old": "cpp"
+        "*.old": "cpp",
+        "condition_variable": "cpp"
     }
 }
