@@ -30,16 +30,15 @@ public:
      - move getTemplateObj and getTemplateStr to private pure virtual
     - add getRenderedStr()
     */
-    explicit SemanticNode(const std::string &tag ,
-                          const std::string &datatype) : tag{tag},datatype{datatype} {}
-    
+    explicit SemanticNode(const std::string &tag,
+                          const std::string &datatype) : tag{tag}, datatype{datatype} {}
 
     const std::string tag;
     const std::string datatype;
     virtual ~SemanticNode() = default;
 
     //- {function} 0 2
-    const std::string getRenderedStr() 
+    const std::string getRenderedStr()
     //-only-file body
     {
         inja::Environment env;
@@ -47,12 +46,10 @@ public:
     }
 
     //-only-file header
-    private:
+private:
     virtual const nlohmann::json getTemplateObj() const = 0;
     virtual const std::string getTemplateStr() const = 0;
-
 };
-
 
 //-only-file header
 //-var {PRE} "LogicalGateAnd::"
@@ -62,10 +59,9 @@ public:
     //- {function} 1 1
     explicit LogicalGateAnd(const std::string &tag,
                             const std::string &val1,
-                            const std::string &val2
-                            )
+                            const std::string &val2)
         //-only-file body
-        : SemanticNode(tag, "bool" ), val1{val1}, val2{val2}
+        : SemanticNode(tag, "bool"), val1{val1}, val2{val2}
     {
     }
 
@@ -79,7 +75,7 @@ private:
     //-only-file body
     {
         std::string str = R"(
-        const {{datatype}} {{tag}} = {{val1}} == {{val2}};
+        {{tag}} = {{val1}} == {{val2}};
          )";
 
         return str;
@@ -107,14 +103,11 @@ public:
     //- {function} 1 1
     explicit LogicalGateOr(const std::string &tag,
                            const std::string &val1,
-                           const std::string &val2
-                           )
+                           const std::string &val2)
         //-only-file body
-        : SemanticNode(tag, "bool" ), val1{val1}, val2{val2}
+        : SemanticNode(tag, "bool"), val1{val1}, val2{val2}
     {
     }
-
-
 
     //-only-file header
 private:
@@ -144,7 +137,7 @@ private:
         return json;
     }
 
-  //-only-file header  
+    //-only-file header
 };
 
 //-only-file header
@@ -155,14 +148,11 @@ public:
     //- {function} 1 1
     explicit LogicalGateNand(const std::string &tag,
                              const std::string &val1,
-                             const std::string &val2
-                             )
+                             const std::string &val2)
         //-only-file body
-        : SemanticNode(tag, "bool" ), val1{val1}, val2{val2}
+        : SemanticNode(tag, "bool"), val1{val1}, val2{val2}
     {
     }
-
-
 
     //-only-file header
 private:
@@ -203,10 +193,9 @@ public:
     //- {function} 1 1
     explicit LogicalGateXor(const std::string &tag,
                             const std::string &val1,
-                            const std::string &val2
-                            )
+                            const std::string &val2)
         //-only-file body
-        : SemanticNode(tag, "bool" ), val1{val1}, val2{val2}
+        : SemanticNode(tag, "bool"), val1{val1}, val2{val2}
     {
     }
 
@@ -251,17 +240,15 @@ public:
                         const std::string &datatype,
                         const std::string &val)
         //-only-file body
-        : SemanticNode(tag, datatype ), val{val}
+        : SemanticNode(tag, datatype), val{val}
     {
     }
-
-
 
     //-only-file header
 private:
     const std::string val;
 
-        //- {function} 0 2
+    //- {function} 0 2
     const std::string getTemplateStr() const override
     //-only-file body
     {
@@ -284,9 +271,6 @@ private:
     }
     //-only-file header
 };
-
-
-
 
 //-only-file header
 //-var {PRE} "ExternalHwBinding::"
@@ -352,10 +336,19 @@ private:
     //-only-file body
     {
         std::vector<ExternalHwBindingItem> v;
-        for (auto i : std::views::iota(0, dataLen))
+        if (dataLen > 1)
+        {
+            for (auto i : std::views::iota(0, dataLen))
+            {
+                ExternalHwBindingItem a;
+                a.tag = tag + "[" + std::to_string(i) + "]";
+                v.emplace_back(a);
+            }
+        }
+        else
         {
             ExternalHwBindingItem a;
-            a.tag = tag + "[" + std::to_string(i) +"]";
+            a.tag = tag;
             v.emplace_back(a);
         }
 
@@ -399,6 +392,26 @@ public:
     std::string tag = ".";
     std::string datatype = "int";
     bool isConst = true;
+
+    //- {fn}
+    std::string tagAt(int position)
+    //-only-file body
+    {
+        int semanticGroupIdx = 0;
+        for (const auto &row : semanticGroups)
+        {
+            for (int i = row.fromIdx; i <= row.toIdx; i++)
+            {
+                if (position == semanticGroupIdx)
+                {
+                    return row.ehb->signalPorts.at(i).tag;
+                }
+                semanticGroupIdx++;
+            }
+        }
+        std::runtime_error("Not found in semanticGroupIdx");
+        return "";
+    }
 
     //- {fn}
     void printAllAliases()
@@ -473,7 +486,7 @@ class FlatLangConfig
 public:
     std::vector<ExternalHwBinding> externalHwBindings;
     std::vector<SemanticGroup> semanticGroups;
-    std::vector<SemanticNode*> semanticNodes;
+    std::vector<SemanticNode *> semanticNodes;
 
     //- {fn}
     std::string getConfig()
@@ -486,7 +499,6 @@ public:
         {
             data["semanticNodes"].push_back(row->getRenderedStr());
         }
-
 
         data["semanticGroups"] = nlohmann::json::array({});
         for (auto const &row : semanticGroups)

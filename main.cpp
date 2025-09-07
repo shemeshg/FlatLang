@@ -19,10 +19,7 @@ int main(int, char **)
     auto cFalse = std::make_unique<FixedValue>("cFalse", "bool", "false");
     flatLangConfig.semanticNodes.push_back(cTrue.get());
     flatLangConfig.semanticNodes.push_back(cFalse.get());
-    auto thisIsAnd = std::make_unique<LogicalGateAnd>(gpio_out.signalPorts.at(0).tag, gpio_in.signalPorts.at(0).tag, gpio_in.signalPorts.at(1).tag);
     
-    flatLangConfig.semanticNodes.push_back(thisIsAnd.get());
-
     
     SemanticGroup usedInputes;
     usedInputes.tag = "usedInputs";
@@ -34,6 +31,16 @@ int main(int, char **)
     usedInputes.semanticGroups.emplace_back(i1);
     flatLangConfig.semanticGroups.emplace_back(usedInputes);
     
+   auto thisIsAnd = std::make_unique<LogicalGateAnd>(gpio_out.signalPorts.at(0).tag, 
+                            usedInputes.tagAt(0), 
+                            gpio_in.signalPorts.at(1).tag);   
+    auto thisIsAnd2 = std::make_unique<LogicalGateAnd>(gpio_out.signalPorts.at(1).tag, 
+                            gpio_in.signalPorts.at(1).tag, 
+                            gpio_in.signalPorts.at(2).tag);    
+    flatLangConfig.semanticNodes.push_back(thisIsAnd.get());
+    flatLangConfig.semanticNodes.push_back(thisIsAnd2.get());
+
+
     std::cout<<flatLangConfig.getConfig();
 
     //gpio_in.signalPorts[1].aliases= std::vector<std::string>{"aa","bb"};
