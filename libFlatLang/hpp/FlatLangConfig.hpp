@@ -119,7 +119,7 @@ private:
     //-only-file body
     {
         std::string str = R"(
-        const {{datatype}} {{tag}} = {{val1}} || {{val2};
+         {{tag}} = {{val1}} || {{val2};
          )";
 
         return str;
@@ -164,7 +164,7 @@ private:
     //-only-file body
     {
         std::string str = R"(
-        const {{datatype}} {{tag}} =   !({{val1}} && {{val2};
+        {{tag}} =   !({{val1}} && {{val2};
          )";
 
         return str;
@@ -209,7 +209,7 @@ private:
     //-only-file body
     {
         std::string str = R"(
-        const {{var.datatype}} {{var.tag}} =  {{val1}} ^ {{val2}}  ;
+        {{var.tag}} =  {{val1}} ^ {{val2}}  ;
          )";
 
         return str;
