@@ -31,14 +31,21 @@ int main(int, char **)
     usedInputes.semanticGroups.emplace_back(i1);
     flatLangConfig.semanticGroups.emplace_back(usedInputes);
     
-   auto thisIsAnd = std::make_unique<LogicalGateAnd>(gpio_out.signalPorts.at(0).tag, 
-                            usedInputes.tagAt(0), 
-                            gpio_in.signalPorts.at(1).tag);   
+    const TagOut result(gpio_out.signalPorts.at(0).tag);
+    const TagIn val1(usedInputes.tagAt(0));
+    const TagIn val2(usedInputes.tagAt(1));
+
+   auto thisIsAnd = std::make_unique<LogicalGateAnd>(result,
+                            val1,
+                            val2);
+    /*
     auto thisIsAnd2 = std::make_unique<LogicalGateAnd>(gpio_out.signalPorts.at(1).tag, 
                             gpio_in.signalPorts.at(1).tag, 
-                            gpio_in.signalPorts.at(2).tag);    
-    flatLangConfig.semanticNodes.push_back(thisIsAnd.get());
+                            gpio_in.signalPorts.at(2).tag);
     flatLangConfig.semanticNodes.push_back(thisIsAnd2.get());
+    */
+    flatLangConfig.semanticNodes.push_back(thisIsAnd.get());
+
 
 
     std::cout<<flatLangConfig.getConfig();

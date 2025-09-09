@@ -21,15 +21,16 @@ public:
     std::string tag;
 };
 
+
+
+
+
 //-only-file header
 //-var {PRE} "SemanticNode::"
 class SemanticNode
 {
 public:
-    /* ******************************
-     - move getTemplateObj and getTemplateStr to private pure virtual
-    - add getRenderedStr()
-    */
+
     explicit SemanticNode(const std::string &tag,
                           const std::string &datatype) : tag{tag}, datatype{datatype} {}
 
@@ -52,16 +53,34 @@ private:
 };
 
 //-only-file header
+
+class Tag {
+public:
+    explicit Tag(const std::string &tag):tag{tag}{}
+    const std::string tag;
+};
+
+class TagOut: public Tag {
+public:
+    explicit TagOut(const std::string &tag):Tag(tag){}
+};
+
+class TagIn: public Tag {
+public:
+    explicit TagIn(const std::string &tag):Tag(tag){}
+};
+
+//-only-file header
 //-var {PRE} "LogicalGateAnd::"
 class LogicalGateAnd : public SemanticNode
 {
 public:
     //- {function} 1 1
-    explicit LogicalGateAnd(const std::string &tag,
-                            const std::string &val1,
-                            const std::string &val2)
+    explicit LogicalGateAnd(const TagOut &result,
+                            const TagIn &val1,
+                            const TagIn &val2)
         //-only-file body
-        : SemanticNode(tag, "bool"), val1{val1}, val2{val2}
+        : SemanticNode(result.tag, "bool"), val1{val1.tag}, val2{val2.tag}
     {
     }
 
@@ -92,141 +111,6 @@ private:
         json["val2"] = val2;
         return json;
     }
-    //-only-file header
-};
-
-//-only-file header
-//-var {PRE} "LogicalGateOr::"
-class LogicalGateOr : public SemanticNode
-{
-public:
-    //- {function} 1 1
-    explicit LogicalGateOr(const std::string &tag,
-                           const std::string &val1,
-                           const std::string &val2)
-        //-only-file body
-        : SemanticNode(tag, "bool"), val1{val1}, val2{val2}
-    {
-    }
-
-    //-only-file header
-private:
-    const std::string val1;
-    const std::string val2;
-
-    //- {function} 0 2
-    const std::string getTemplateStr() const override
-    //-only-file body
-    {
-        std::string str = R"(
-         {{tag}} = {{val1}} || {{val2};
-         )";
-
-        return str;
-    }
-
-    //- {function} 0 2
-    const nlohmann::json getTemplateObj() const override
-    //-only-file body
-    {
-        nlohmann::json json = nlohmann::json::object({});
-        json["datatype"] = datatype;
-        json["tag"] = tag;
-        json["val1"] = val1;
-        json["val2"] = val2;
-        return json;
-    }
-
-    //-only-file header
-};
-
-//-only-file header
-//-var {PRE} "LogicalGateNand::"
-class LogicalGateNand : public SemanticNode
-{
-public:
-    //- {function} 1 1
-    explicit LogicalGateNand(const std::string &tag,
-                             const std::string &val1,
-                             const std::string &val2)
-        //-only-file body
-        : SemanticNode(tag, "bool"), val1{val1}, val2{val2}
-    {
-    }
-
-    //-only-file header
-private:
-    const std::string val1;
-    const std::string val2;
-
-    //- {function} 0 2
-    const std::string getTemplateStr() const override
-    //-only-file body
-    {
-        std::string str = R"(
-        {{tag}} =   !({{val1}} && {{val2};
-         )";
-
-        return str;
-    }
-
-    //- {function} 0 2
-    const nlohmann::json getTemplateObj() const override
-    //-only-file body
-    {
-        nlohmann::json json = nlohmann::json::object({});
-        json["datatype"] = datatype;
-        json["tag"] = tag;
-        json["val1"] = val1;
-        json["val2"] = val2;
-        return json;
-    }
-
-    //-only-file header
-};
-
-//-only-file header
-//-var {PRE} "LogicalGateXor::"
-class LogicalGateXor : public SemanticNode
-{
-public:
-    //- {function} 1 1
-    explicit LogicalGateXor(const std::string &tag,
-                            const std::string &val1,
-                            const std::string &val2)
-        //-only-file body
-        : SemanticNode(tag, "bool"), val1{val1}, val2{val2}
-    {
-    }
-
-    //-only-file header
-private:
-    const std::string val1;
-    const std::string val2;
-
-    //- {function} 0 2
-    const std::string getTemplateStr() const override
-    //-only-file body
-    {
-        std::string str = R"(
-        {{var.tag}} =  {{val1}} ^ {{val2}}  ;
-         )";
-
-        return str;
-    }
-
-    //- {function} 0 2
-    const nlohmann::json getTemplateObj() const override
-    //-only-file body
-    {
-        nlohmann::json json = nlohmann::json::object({});
-        json["datatype"] = datatype;
-        json["tag"] = tag;
-        json["val1"] = val1;
-        json["val2"] = val2;
-        return json;
-    }
-
     //-only-file header
 };
 

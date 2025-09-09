@@ -20,7 +20,7 @@ import sys
 import concurrent.futures
 from typing import Match, Union
 
-is_source_map: bool = False
+is_source_map: bool = True
 
 class FileClass:
     file_path: str = ""
