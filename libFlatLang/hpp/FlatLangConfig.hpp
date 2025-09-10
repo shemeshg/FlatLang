@@ -243,6 +243,30 @@ private:
 };
 
 //-only-file header
+class ExternalHwBindingIn: public ExternalHwBinding {
+public:
+    explicit ExternalHwBindingIn(std::string tag, std::string datatype, int dataLen, bool isConst):
+    ExternalHwBinding(tag, datatype,  dataLen,  isConst){
+    }
+
+    TagIn getTagAt(int idx){
+        return TagIn( signalPorts.at(0).tag );
+    }
+
+};
+
+class ExternalHwBindingOut: public ExternalHwBinding {
+public:
+    explicit ExternalHwBindingOut(std::string tag, std::string datatype, int dataLen, bool isConst):
+        ExternalHwBinding(tag, datatype,  dataLen,  isConst){
+    }
+
+    TagOut getTagAt(int idx){
+        return TagOut( signalPorts.at(0).tag );
+    }
+};
+
+//-only-file header
 //-var {PRE} "SemanticGroupItem::"
 class SemanticGroupItem
 {

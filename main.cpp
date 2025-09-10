@@ -6,13 +6,13 @@
 int main(int, char **)
 {
     FlatLangConfig flatLangConfig;
-    ExternalHwBinding gpio_in("gpio_in","int",4,  true);
+    ExternalHwBindingIn gpio_in("gpio_in","int",4,  true);
     flatLangConfig.externalHwBindings.push_back(gpio_in);
 
-    ExternalHwBinding gpio_out("gpio_out","int",4,  false);    
+    ExternalHwBindingOut gpio_out("gpio_out","int",4,  false);
     flatLangConfig.externalHwBindings.push_back(gpio_out);
 
-    ExternalHwBinding tick_counter("tick_counter","int",1,  true);
+    ExternalHwBindingIn tick_counter("tick_counter","int",1,  true);
     flatLangConfig.externalHwBindings.push_back(tick_counter);
 
     auto cTrue = std::make_unique<FixedValue>("cTrue", "bool", "true");
@@ -31,7 +31,7 @@ int main(int, char **)
     usedInputes.semanticGroups.emplace_back(i1);
     flatLangConfig.semanticGroups.emplace_back(usedInputes);
     
-    const TagOut result(gpio_out.signalPorts.at(0).tag);
+    const TagOut result = gpio_out.getTagAt(0);
     const TagIn val1(usedInputes.tagAt(0));
     const TagIn val2(usedInputes.tagAt(1));
 
