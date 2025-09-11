@@ -15,6 +15,11 @@ int main(int, char **)
     ExternalHwBindingIn tick_counter("tick_counter","int",1,  true);
     flatLangConfig.externalHwBindings.push_back(tick_counter);
 
+    // flatLangConfig.getFixedValue("cTrue", "bool", "true") => TagOut
+    // it is
+    //     TagOut getTagAt(int idx){
+    //return TagOut( signalPorts.at(0).tag );
+    //}
     auto cTrue = std::make_unique<FixedValue>("cTrue", "bool", "true");
     auto cFalse = std::make_unique<FixedValue>("cFalse", "bool", "false");
     flatLangConfig.semanticNodes.push_back(cTrue.get());
