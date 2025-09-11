@@ -1,5 +1,7 @@
 # Todo and draft
 
+https://google.github.io/googletest/primer.html
+
 test logical gates
 ```
 #include <stdexcept>

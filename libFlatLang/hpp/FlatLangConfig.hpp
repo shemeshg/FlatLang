@@ -289,6 +289,17 @@ public:
     int toIdx = 0;
 
     ExternalHwBinding *ehb;
+
+    virtual ~SemanticGroupItem(){}
+};
+
+class SemanticGroupItemIn: public SemanticGroupItem
+{
+public:
+    explicit SemanticGroupItemIn(ExternalHwBindingIn *ehb):SemanticGroupItem(ehb){
+
+    }
+
 };
 
 //-only-file header
@@ -296,6 +307,8 @@ public:
 class SemanticGroup
 {
 public:
+    explicit SemanticGroup(std::string tag):tag{tag}{}
+    virtual ~SemanticGroup(){}
     std::vector<SemanticGroupItem> semanticGroups;
     std::string tag = ".";
     std::string datatype = "int";
@@ -385,6 +398,14 @@ public:
     }
 
     //-only-file header
+};
+
+class SemanticGroupIn:public  SemanticGroup{
+public:
+    explicit SemanticGroupIn(std::string tag):SemanticGroup(tag){}
+    void addSemanticNode(SemanticGroupItemIn &itm){
+        semanticGroups.emplace_back(itm);
+    }
 };
 
 //-only-file header

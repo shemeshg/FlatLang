@@ -21,14 +21,14 @@ int main(int, char **)
     flatLangConfig.semanticNodes.push_back(cFalse.get());
     
     
-    SemanticGroup usedInputes;
-    usedInputes.tag = "usedInputs";
-    SemanticGroupItem i0(&tick_counter);
-    SemanticGroupItem i1(&gpio_in);
+    SemanticGroupIn usedInputes("usedInputs");
+
+    SemanticGroupItemIn i0(&tick_counter);
+    SemanticGroupItemIn i1(&gpio_in);
     i1.fromIdx =0;
     i1.toIdx = 2;
-    usedInputes.semanticGroups.emplace_back(i0);
-    usedInputes.semanticGroups.emplace_back(i1);
+    usedInputes.addSemanticNode(i0);
+    usedInputes.addSemanticNode(i1);
     flatLangConfig.semanticGroups.emplace_back(usedInputes);
     
     const TagOut result = gpio_out.getTagAt(0);
