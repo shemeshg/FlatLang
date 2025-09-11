@@ -302,6 +302,15 @@ public:
 
 };
 
+class SemanticGroupItemOut: public SemanticGroupItem
+{
+public:
+    explicit SemanticGroupItemOut(ExternalHwBindingOut *ehb):SemanticGroupItem(ehb){
+
+    }
+
+};
+
 //-only-file header
 //-var {PRE} "SemanticGroup::"
 class SemanticGroup
@@ -404,6 +413,14 @@ class SemanticGroupIn:public  SemanticGroup{
 public:
     explicit SemanticGroupIn(std::string tag):SemanticGroup(tag){}
     void addSemanticNode(SemanticGroupItemIn &itm){
+        semanticGroups.emplace_back(itm);
+    }
+};
+
+class SemanticGroupOut:public  SemanticGroup{
+public:
+    explicit SemanticGroupOut(std::string tag):SemanticGroup(tag){}
+    void addSemanticNode(SemanticGroupItemOut &itm){
         semanticGroups.emplace_back(itm);
     }
 };
