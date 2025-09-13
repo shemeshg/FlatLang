@@ -6,14 +6,10 @@
 int main(int, char **)
 {
     FlatLangConfig flatLangConfig;
-    ExternalHwBindingIn gpio_in("gpio_in","int",4,  true);
-    flatLangConfig.externalHwBindings.push_back(gpio_in);
+    auto gpio_in = flatLangConfig.addExternalHwBindingIn("gpio_in","int",4,  true);
+    auto gpio_out = flatLangConfig.addExternalHwBindingOut("gpio_out","int",4,  false);
+    auto tick_counter = flatLangConfig.addExternalHwBindingIn("tick_counter","int",1,  true);
 
-    ExternalHwBindingOut gpio_out("gpio_out","int",4,  false);
-    flatLangConfig.externalHwBindings.push_back(gpio_out);
-
-    ExternalHwBindingIn tick_counter("tick_counter","int",1,  true);
-    flatLangConfig.externalHwBindings.push_back(tick_counter);
 
     // flatLangConfig.getFixedValue("cTrue", "bool", "true") => TagOut
     // it is
@@ -22,21 +18,21 @@ int main(int, char **)
     //}
     auto cTrue = FixedValue("cTrue", "bool", "true");
     auto cFalse = FixedValue("cFalse", "bool", "false");
-    flatLangConfig.semanticNodes.push_back(&cTrue);
-    flatLangConfig.semanticNodes.push_back(&cFalse);
+    flatLangConfig.semanticNodes.emplace_back(&cTrue);
+    flatLangConfig.semanticNodes.emplace_back(&cFalse);
     
-    
+
     SemanticGroupIn usedInputes("usedInputs");
 
-    SemanticGroupItemIn i0(&tick_counter);
-    SemanticGroupItemIn i1(&gpio_in);
+    SemanticGroupItemIn i0(tick_counter);
+    SemanticGroupItemIn i1(gpio_in);
     i1.fromIdx =0;
     i1.toIdx = 2;
     usedInputes.addSemanticNode(i0);
     usedInputes.addSemanticNode(i1);
     flatLangConfig.semanticGroups.emplace_back(usedInputes);
     
-    const TagOut result = gpio_out.getTagAt(0);
+    const TagOut result = gpio_out->getTagAt(0);
     const TagIn val1(usedInputes.tagAt(0));
     const TagIn val2(usedInputes.tagAt(1));
 

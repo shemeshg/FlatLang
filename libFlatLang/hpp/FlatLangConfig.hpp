@@ -127,6 +127,10 @@ public:
     {
     }
 
+    TagIn getTag(){
+        return TagIn(tag);
+    }
+
     //-only-file header
 private:
     const std::string val;
@@ -429,9 +433,33 @@ public:
 class FlatLangConfig
 {
 public:
-    std::vector<ExternalHwBinding> externalHwBindings;
+    std::vector<std::unique_ptr<ExternalHwBinding>>  externalHwBindings;
     std::vector<SemanticGroup> semanticGroups;
     std::vector<SemanticNode *> semanticNodes;
+
+    //- {fn}
+    ExternalHwBindingIn* addExternalHwBindingIn(std::string tag,
+                                                std::string datatype,
+                                                int dataLen, bool isConst)
+    //-only-file body
+    {
+        auto ptr = std::make_unique<ExternalHwBindingIn>(tag, datatype, dataLen, isConst);
+        auto rawPtr = ptr.get();
+        externalHwBindings.emplace_back(std::move(ptr));
+        return rawPtr;
+    }
+
+    //- {fn}
+    ExternalHwBindingOut* addExternalHwBindingOut(std::string tag,
+                                                std::string datatype,
+                                                int dataLen, bool isConst)
+    //-only-file body
+    {
+        auto ptr = std::make_unique<ExternalHwBindingOut>(tag, datatype, dataLen, isConst);
+        auto rawPtr = ptr.get();
+        externalHwBindings.emplace_back(std::move(ptr));
+        return rawPtr;
+    }
 
     //- {fn}
     std::string getConfig()
@@ -454,7 +482,7 @@ public:
         data["externalParams"] = nlohmann::json::array({});
         for (auto const &row : externalHwBindings)
         {
-            data["externalParams"].push_back(row.getTemplateObj());
+            data["externalParams"].push_back(row->getTemplateObj());
         }
 
         std::string configTemplate = R"(
