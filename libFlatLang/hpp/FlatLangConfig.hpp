@@ -5,7 +5,6 @@
 #pragma once
 #include <vector>
 #include <string>
-
 #include <nlohmann/json.hpp>
 //-only-file body //-
 #include <inja.hpp>
@@ -494,5 +493,9 @@ _{{var.tag}}.push_back(std::ref( {% if item.isUnary %}  {{ item.tag}}  {% else %
 
         return env.render(configTemplate, data);
     }
+
+
+
+
     //-only-file header
 };

@@ -20,10 +20,10 @@ int main(int, char **)
     //     TagOut getTagAt(int idx){
     //return TagOut( signalPorts.at(0).tag );
     //}
-    auto cTrue = std::make_unique<FixedValue>("cTrue", "bool", "true");
-    auto cFalse = std::make_unique<FixedValue>("cFalse", "bool", "false");
-    flatLangConfig.semanticNodes.push_back(cTrue.get());
-    flatLangConfig.semanticNodes.push_back(cFalse.get());
+    auto cTrue = FixedValue("cTrue", "bool", "true");
+    auto cFalse = FixedValue("cFalse", "bool", "false");
+    flatLangConfig.semanticNodes.push_back(&cTrue);
+    flatLangConfig.semanticNodes.push_back(&cFalse);
     
     
     SemanticGroupIn usedInputes("usedInputs");
