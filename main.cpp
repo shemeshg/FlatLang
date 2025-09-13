@@ -40,7 +40,7 @@ int main(int, char **)
     const TagIn val1(usedInputes.tagAt(0));
     const TagIn val2(usedInputes.tagAt(1));
 
-   auto thisIsAnd = std::make_unique<LogicalGateAnd>(result,
+   auto thisIsAnd = LogicalGateAnd(result,
                             val1,
                             val2);
     /*
@@ -49,7 +49,7 @@ int main(int, char **)
                             gpio_in.signalPorts.at(2).tag);
     flatLangConfig.semanticNodes.push_back(thisIsAnd2.get());
     */
-    flatLangConfig.semanticNodes.push_back(thisIsAnd.get());
+    flatLangConfig.semanticNodes.push_back(&thisIsAnd);
 
 
 
