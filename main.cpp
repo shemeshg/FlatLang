@@ -10,18 +10,11 @@ int main(int, char **)
     auto gpio_out = flatLangConfig.addExternalHwBindingOut("gpio_out","int",4,  false);
     auto tick_counter = flatLangConfig.addExternalHwBindingIn("tick_counter","int",1,  true);
 
+    auto cTrue = flatLangConfig.addFixedValue("cTrue", "bool", "true");
+    auto cFalse = flatLangConfig.addFixedValue("cFalse", "bool", "false");
 
-    // flatLangConfig.getFixedValue("cTrue", "bool", "true") => TagOut
-    // it is
-    //     TagOut getTagAt(int idx){
-    //return TagOut( signalPorts.at(0).tag );
-    //}
-    auto cTrue = FixedValue("cTrue", "bool", "true");
-    auto cFalse = FixedValue("cFalse", "bool", "false");
-    flatLangConfig.semanticNodes.emplace_back(&cTrue);
-    flatLangConfig.semanticNodes.emplace_back(&cFalse);
     
-
+    //ERROR SHould be implemented part of config.addSemanticGroupIn !!!!
     SemanticGroupIn usedInputes("usedInputs");
 
     SemanticGroupItemIn i0(tick_counter);
@@ -36,16 +29,15 @@ int main(int, char **)
     const TagIn val1(usedInputes.tagAt(0));
     const TagIn val2(usedInputes.tagAt(1));
 
-   auto thisIsAnd = LogicalGateAnd(result,
+    auto thisIsAnd = flatLangConfig.addLogicalGateAnd(result,
                             val1,
                             val2);
-    /*
-    auto thisIsAnd2 = std::make_unique<LogicalGateAnd>(gpio_out.signalPorts.at(1).tag, 
-                            gpio_in.signalPorts.at(1).tag, 
-                            gpio_in.signalPorts.at(2).tag);
-    flatLangConfig.semanticNodes.push_back(thisIsAnd2.get());
-    */
-    flatLangConfig.semanticNodes.push_back(&thisIsAnd);
+
+    //ERROR result can not be assigned twice !!!!!!!!!!
+    auto thisIsAnd2 = flatLangConfig.addLogicalGateAnd(result,
+                                                      cTrue->getTag(),
+                                                      cFalse->getTag());
+
 
 
 

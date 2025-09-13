@@ -127,6 +127,7 @@ public:
     {
     }
 
+    //-only-file header
     TagIn getTag(){
         return TagIn(tag);
     }
@@ -435,7 +436,31 @@ class FlatLangConfig
 public:
     std::vector<std::unique_ptr<ExternalHwBinding>>  externalHwBindings;
     std::vector<SemanticGroup> semanticGroups;
-    std::vector<SemanticNode *> semanticNodes;
+    std::vector<std::unique_ptr<SemanticNode>> semanticNodes;
+
+    //- {fn}
+    LogicalGateAnd *addLogicalGateAnd(const TagOut &result,
+                                      const TagIn &val1,
+                                      const TagIn &val2)
+    //-only-file body
+    {
+        auto ptr = std::make_unique<LogicalGateAnd>(result, val1, val2);
+        auto rawPtr = ptr.get();
+        semanticNodes.emplace_back(std::move(ptr));
+        return rawPtr;
+    }
+
+    //- {fn}
+    FixedValue *addFixedValue(const std::string &tag,
+                              const std::string &datatype,
+                              const std::string &val)
+    //-only-file body
+    {
+        auto ptr = std::make_unique<FixedValue>(tag, datatype, val);
+        auto rawPtr = ptr.get();
+        semanticNodes.emplace_back(std::move(ptr));
+        return rawPtr;
+    }
 
     //- {fn}
     ExternalHwBindingIn* addExternalHwBindingIn(std::string tag,
