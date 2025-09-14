@@ -322,7 +322,7 @@ class SemanticGroup
 public:
     explicit SemanticGroup(std::string tag):tag{tag}{}
     virtual ~SemanticGroup(){}
-    std::vector<SemanticGroupItem> semanticGroups;
+    std::vector<std::unique_ptr<SemanticGroupItem>> semanticGroups;
     std::string tag = ".";
     std::string datatype = "int";
     bool isConst = true;
@@ -334,11 +334,11 @@ public:
         int semanticGroupIdx = 0;
         for (const auto &row : semanticGroups)
         {
-            for (int i = row.fromIdx; i <= row.toIdx; i++)
+            for (int i = row->fromIdx; i <= row->toIdx; i++)
             {
                 if (position == semanticGroupIdx)
                 {
-                    return row.ehb->signalPorts.at(i).tag;
+                    return row->ehb->signalPorts.at(i).tag;
                 }
                 semanticGroupIdx++;
             }
@@ -355,13 +355,13 @@ public:
         int semanticGroupIdx = 0;
         for (const auto &row : semanticGroups)
         {
-            for (int i = row.fromIdx; i <= row.toIdx; i++)
+            for (int i = row->fromIdx; i <= row->toIdx; i++)
             {
                 semanticGroupIdx++;
-                if (row.ehb->signalPorts[i].aliases.size() > 0)
+                if (row->ehb->signalPorts[i].aliases.size() > 0)
                 {
                     std::ostringstream oss;
-                    for (const auto &alias : row.ehb->signalPorts[i].aliases)
+                    for (const auto &alias : row->ehb->signalPorts[i].aliases)
                     {
                         oss << alias << " ";
                     }
@@ -378,9 +378,9 @@ public:
     {
         return std::accumulate(
             semanticGroups.begin(), semanticGroups.end(), 0,
-            [](int sum, const SemanticGroupItem &row)
+            [](int sum, const auto &row)
             {
-                return sum + row.ehb->dataLen;
+                return sum + row->ehb->dataLen;
             });
     }
 
@@ -398,12 +398,12 @@ public:
         for (const auto &row : semanticGroups)
         {
 
-            for (int i = row.fromIdx; i <= row.toIdx; i++)
+            for (int i = row->fromIdx; i <= row->toIdx; i++)
             {
                 nlohmann::json item = nlohmann::json::object({});
-                item["tag"] = row.ehb->tag;
+                item["tag"] = row->ehb->tag;
                 item["index"] = i;
-                item["isUnary"] = row.ehb->isUnary();
+                item["isUnary"] = row->ehb->isUnary();
                 declarationJson["items"].push_back(item);
             }
         }
@@ -416,16 +416,36 @@ public:
 class SemanticGroupIn:public  SemanticGroup{
 public:
     explicit SemanticGroupIn(std::string tag):SemanticGroup(tag){}
-    void addSemanticNode(SemanticGroupItemIn &itm){
-        semanticGroups.emplace_back(itm);
+
+    SemanticGroupItemIn* addSemanticGroupItemIn(ExternalHwBindingIn *_ehb,
+                                                int _fromIdx = 0,
+                                                int _toIdx = 0)
+    {
+        auto ptr = std::make_unique<SemanticGroupItemIn>(_ehb);
+        ptr->fromIdx = _fromIdx;
+        ptr->toIdx = _toIdx;
+        auto rawPtr = ptr.get();
+        semanticGroups.emplace_back(std::move(ptr));
+        return rawPtr;
+
     }
+
 };
 
 class SemanticGroupOut:public  SemanticGroup{
 public:
     explicit SemanticGroupOut(std::string tag):SemanticGroup(tag){}
-    void addSemanticNode(SemanticGroupItemOut &itm){
-        semanticGroups.emplace_back(itm);
+    SemanticGroupItemOut* addSemanticGroupItemOut(ExternalHwBindingOut *_ehb,
+                                                int _fromIdx = 0,
+                                                int _toIdx = 0)
+    {
+        auto ptr = std::make_unique<SemanticGroupItemOut>(_ehb);
+        ptr->fromIdx = _fromIdx;
+        ptr->toIdx = _toIdx;
+        auto rawPtr = ptr.get();
+        semanticGroups.emplace_back(std::move(ptr));
+        return rawPtr;
+
     }
 };
 

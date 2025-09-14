@@ -16,13 +16,8 @@ int main(int, char **)
     
     //ERROR SHould be implemented part of config.addSemanticGroupIn !!!!
     auto usedInputes = flatLangConfig.addSemanticGroupIn ("usedInputs");
-
-    SemanticGroupItemIn i0(tick_counter);
-    SemanticGroupItemIn i1(gpio_in);
-    i1.fromIdx =0;
-    i1.toIdx = 2;
-    usedInputes->addSemanticNode(i0);
-    usedInputes->addSemanticNode(i1);
+    auto i0 = usedInputes->addSemanticGroupItemIn(tick_counter);
+    auto i1 = usedInputes->addSemanticGroupItemIn(gpio_in,0,2);
 
     
     const TagOut result = gpio_out->getTagAt(0);
