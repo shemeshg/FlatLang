@@ -13,8 +13,7 @@ int main(int, char **)
     auto cTrue = flatLangConfig.addFixedValue("cTrue", "bool", "true");
     auto cFalse = flatLangConfig.addFixedValue("cFalse", "bool", "false");
 
-    
-    //ERROR SHould be implemented part of config.addSemanticGroupIn !!!!
+        
     auto usedInputes = flatLangConfig.addSemanticGroupIn ("usedInputs");
     auto i0 = usedInputes->addSemanticGroupItemIn(tick_counter);
     auto i1 = usedInputes->addSemanticGroupItemIn(gpio_in,0,2);
@@ -29,6 +28,7 @@ int main(int, char **)
                             val2);
 
     //ERROR result can not be assigned twice !!!!!!!!!!
+    //TODO Can I make any TagOutSemanticGroup TagInSemanticGroup
     auto thisIsAnd2 = flatLangConfig.addLogicalGateAnd(result,
                                                       cTrue->getTag(),
                                                       cFalse->getTag());
