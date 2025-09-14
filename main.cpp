@@ -15,19 +15,19 @@ int main(int, char **)
 
     
     //ERROR SHould be implemented part of config.addSemanticGroupIn !!!!
-    SemanticGroupIn usedInputes("usedInputs");
+    auto usedInputes = flatLangConfig.addSemanticGroupIn ("usedInputs");
 
     SemanticGroupItemIn i0(tick_counter);
     SemanticGroupItemIn i1(gpio_in);
     i1.fromIdx =0;
     i1.toIdx = 2;
-    usedInputes.addSemanticNode(i0);
-    usedInputes.addSemanticNode(i1);
-    flatLangConfig.semanticGroups.emplace_back(usedInputes);
+    usedInputes->addSemanticNode(i0);
+    usedInputes->addSemanticNode(i1);
+
     
     const TagOut result = gpio_out->getTagAt(0);
-    const TagIn val1(usedInputes.tagAt(0));
-    const TagIn val2(usedInputes.tagAt(1));
+    const TagIn val1(usedInputes->tagAt(0));
+    const TagIn val2(usedInputes->tagAt(1));
 
     auto thisIsAnd = flatLangConfig.addLogicalGateAnd(result,
                             val1,

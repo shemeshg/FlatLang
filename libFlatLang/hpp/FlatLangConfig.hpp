@@ -435,11 +435,31 @@ class FlatLangConfig
 {
 public:
     std::vector<std::unique_ptr<ExternalHwBinding>>  externalHwBindings;
-    std::vector<SemanticGroup> semanticGroups;
+    std::vector<std::unique_ptr<SemanticGroup>> semanticGroups;
     std::vector<std::unique_ptr<SemanticNode>> semanticNodes;
 
     //- {fn}
-    LogicalGateAnd *addLogicalGateAnd(const TagOut &result,
+    SemanticGroupIn* addSemanticGroupIn(std::string tag)
+    //-only-file body
+    {
+        auto ptr = std::make_unique<SemanticGroupIn>(tag);
+        auto rawPtr = ptr.get();
+        semanticGroups.emplace_back(std::move(ptr));
+        return rawPtr;
+    }
+
+    //- {fn}
+    SemanticGroupOut* addSemanticGroupOut(std::string tag)
+    //-only-file body
+    {
+        auto ptr = std::make_unique<SemanticGroupOut>(tag);
+        auto rawPtr = ptr.get();
+        semanticGroups.emplace_back(std::move(ptr));
+        return rawPtr;
+    }
+
+    //- {fn}
+    LogicalGateAnd* addLogicalGateAnd(const TagOut &result,
                                       const TagIn &val1,
                                       const TagIn &val2)
     //-only-file body
@@ -501,7 +521,7 @@ public:
         data["semanticGroups"] = nlohmann::json::array({});
         for (auto const &row : semanticGroups)
         {
-            data["semanticGroups"].push_back(row.getTemplateObj());
+            data["semanticGroups"].push_back(row->getTemplateObj());
         }
 
         data["externalParams"] = nlohmann::json::array({});
