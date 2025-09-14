@@ -23,6 +23,7 @@ int main(int, char **)
     //TODO If true, throw exception
     //TODO getTagAt, should always return the same TagOut
     const TagOut result = gpio_out->getTagAt(0);
+    //BUG THIS SHOULD RETURN TagIn using getTagAt
     const TagIn val1(usedInputes->tagAt(0));
     const TagIn val2(usedInputes->tagAt(1));
 
