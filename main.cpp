@@ -15,21 +15,24 @@ int main(int, char **)
 
         
     auto usedInputes = flatLangConfig.addSemanticGroupIn ("usedInputs");
-    auto i0 = usedInputes->addSemanticGroupItemIn(tick_counter);
-    auto i1 = usedInputes->addSemanticGroupItemIn(gpio_in,0,2);
+    usedInputes->addSemanticGroupItemIn(tick_counter);
+    usedInputes->addSemanticGroupItemIn(gpio_in,0,2);
 
     
+    //TODO Here, isUsed, if not set to true,
+    //TODO If true, throw exception
+    //TODO getTagAt, should always return the same TagOut
     const TagOut result = gpio_out->getTagAt(0);
     const TagIn val1(usedInputes->tagAt(0));
     const TagIn val2(usedInputes->tagAt(1));
 
-    auto thisIsAnd = flatLangConfig.addLogicalGateAnd(result,
+    flatLangConfig.addLogicalGateAnd(result,
                             val1,
                             val2);
 
     //ERROR result can not be assigned twice !!!!!!!!!!
-    //TODO Can I make any TagOutSemanticGroup TagInSemanticGroup
-    auto thisIsAnd2 = flatLangConfig.addLogicalGateAnd(result,
+    //TODO Can I make any TagOutSemanticGroup and TagInSemanticGroup
+    flatLangConfig.addLogicalGateAnd(result,
                                                       cTrue->getTag(),
                                                       cFalse->getTag());
 
