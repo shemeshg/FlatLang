@@ -309,7 +309,6 @@ public:
     explicit SemanticGroupItemIn(ExternalHwBindingIn *ehb):SemanticGroupItem(ehb){
 
     }
-
 };
 
 class SemanticGroupItemOut: public SemanticGroupItem
@@ -318,6 +317,7 @@ public:
     explicit SemanticGroupItemOut(ExternalHwBindingOut *ehb):SemanticGroupItem(ehb){
 
     }
+
 
 };
 
@@ -435,6 +435,10 @@ public:
 
     }
 
+
+    TagIn getTagAt(int idx){
+        return TagIn( tagAt(idx) );
+    }
 };
 
 class SemanticGroupOut:public  SemanticGroup{
@@ -451,6 +455,10 @@ public:
         semanticGroups.emplace_back(std::move(ptr));
         return rawPtr;
 
+    }
+
+    TagOut getTagAt(int idx){
+        return TagOut( tagAt(idx) );
     }
 };
 

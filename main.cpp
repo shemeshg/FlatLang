@@ -24,8 +24,8 @@ int main(int, char **)
     //TODO getTagAt, should always return the same TagOut
     const TagOut result = gpio_out->getTagAt(0);
     //BUG THIS SHOULD RETURN TagIn using getTagAt
-    const TagIn val1(usedInputes->tagAt(0));
-    const TagIn val2(usedInputes->tagAt(1));
+    const TagIn val1 = usedInputes->getTagAt(0);
+    const TagIn val2 = usedInputes->getTagAt(1);
 
     flatLangConfig.addLogicalGateAnd(result,
                             val1,
