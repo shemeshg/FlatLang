@@ -27,13 +27,13 @@ int main(int, char **)
     const TagIn val1 = usedInputes->getTagAt(0);
     const TagIn val2 = usedInputes->getTagAt(1);
 
-    flatLangConfig.addLogicalGateAnd(result,
+    flatLangConfig.addLogicalGate<LogicalGateAnd>(result,
                             val1,
                             val2);
 
     //ERROR result can not be assigned twice !!!!!!!!!!
     //TODO Can I make any TagOutSemanticGroup and TagInSemanticGroup
-    flatLangConfig.addLogicalGateAnd(result,
+    flatLangConfig.addLogicalGate<LogicalGateAnd>(result,
                                                       cTrue->getTag(),
                                                       cFalse->getTag());
 

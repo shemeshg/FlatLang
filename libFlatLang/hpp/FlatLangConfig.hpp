@@ -471,37 +471,36 @@ public:
     std::vector<std::unique_ptr<SemanticGroup>> semanticGroups;
     std::vector<std::unique_ptr<SemanticNode>> semanticNodes;
 
-    //- {fn}
-    SemanticGroupIn* addSemanticGroupIn(std::string tag)
-    //-only-file body
-    {
-        auto ptr = std::make_unique<SemanticGroupIn>(tag);
+    template<typename GroupType>
+    GroupType* addSemanticGroup(std::string tag) {
+        auto ptr = std::make_unique<GroupType>(std::move(tag));
         auto rawPtr = ptr.get();
         semanticGroups.emplace_back(std::move(ptr));
         return rawPtr;
     }
 
-    //- {fn}
-    SemanticGroupOut* addSemanticGroupOut(std::string tag)
-    //-only-file body
-    {
-        auto ptr = std::make_unique<SemanticGroupOut>(tag);
-        auto rawPtr = ptr.get();
-        semanticGroups.emplace_back(std::move(ptr));
-        return rawPtr;
+
+    SemanticGroupIn* addSemanticGroupIn(std::string tag) {
+        return addSemanticGroup<SemanticGroupIn>(std::move(tag));
     }
 
-    //- {fn}
-    LogicalGateAnd* addLogicalGateAnd(const TagOut &result,
-                                      const TagIn &val1,
-                                      const TagIn &val2)
-    //-only-file body
-    {
-        auto ptr = std::make_unique<LogicalGateAnd>(result, val1, val2);
+    SemanticGroupOut* addSemanticGroupOut(std::string tag) {
+        return addSemanticGroup<SemanticGroupOut>(std::move(tag));
+    }
+
+
+
+
+    //-only-file header
+    template<typename GateType, typename... Args>
+    GateType* addLogicalGate(const TagOut& result, Args&&... args) {
+        //result.invalidateAfterFirstTime();
+        auto ptr = std::make_unique<GateType>(result, std::forward<Args>(args)...);
         auto rawPtr = ptr.get();
         semanticNodes.emplace_back(std::move(ptr));
         return rawPtr;
     }
+
 
     //- {fn}
     FixedValue *addFixedValue(const std::string &tag,
