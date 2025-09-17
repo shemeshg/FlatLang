@@ -26,14 +26,16 @@ public:
 
 //-only-file header
 //-var {PRE} "SemanticNode::"
-class SemanticNode
+class SemanticNode: public ExternalHwBindingItem
 {
 public:
 
-    explicit SemanticNode(const std::string &tag,
-                          const std::string &datatype) : tag{tag}, datatype{datatype} {}
+    explicit SemanticNode(const std::string &_tag,
+                          const std::string &datatype) :  datatype{datatype} {
+        tag = _tag;
+    }
 
-    const std::string tag;
+
     const std::string datatype;
     virtual ~SemanticNode() = default;
 
@@ -55,18 +57,22 @@ private:
 
 class Tag {
 public:
-    explicit Tag(const std::string &tag):tag{tag}{}
-    const std::string tag;
+    explicit Tag(ExternalHwBindingItem* ehbi):ehbi{ehbi}{}
+    const std::string getTag() const{
+        return ehbi->tag;
+    }
+private:
+    ExternalHwBindingItem* ehbi;
 };
 
 class TagOut: public Tag {
 public:
-    explicit TagOut(const std::string &tag):Tag(tag){}
+    explicit TagOut(ExternalHwBindingItem* ehbi):Tag(ehbi){}
 };
 
 class TagIn: public Tag {
 public:
-    explicit TagIn(const std::string &tag):Tag(tag){}
+    explicit TagIn(ExternalHwBindingItem* ehbi):Tag(ehbi){}
 };
 
 //-only-file header
@@ -79,7 +85,7 @@ public:
                             const TagIn &val1,
                             const TagIn &val2)
         //-only-file body
-        : SemanticNode(result.tag, "bool"), val1{val1.tag}, val2{val2.tag}
+        : SemanticNode(result.getTag(), "bool"), val1{val1.getTag()}, val2{val2.getTag()}
     {
     }
 
@@ -129,7 +135,7 @@ public:
 
     //-only-file header
     TagIn getTag(){
-        return TagIn(tag);
+        return TagIn(this);
     }
 
     //-only-file header
@@ -254,7 +260,7 @@ public:
     }
 
     TagIn getTagAt(int idx){
-        return TagIn( signalPorts.at(0).tag );
+        return TagIn( &signalPorts.at(0) );
     }
 
 };
@@ -266,7 +272,7 @@ public:
     }
 
     TagOut getTagAt(int idx){
-        return TagOut( signalPorts.at(0).tag );
+        return TagOut( &signalPorts.at(0) );
     }
 };
 
@@ -328,7 +334,7 @@ public:
     bool isConst = true;
 
     //- {fn}
-    std::string tagAt(int position)
+    ExternalHwBindingItem*  tagAt(int position)
     //-only-file body
     {
         int semanticGroupIdx = 0;
@@ -338,13 +344,12 @@ public:
             {
                 if (position == semanticGroupIdx)
                 {
-                    return row->ehb->signalPorts.at(i).tag;
+                    return &row->ehb->signalPorts.at(i);
                 }
                 semanticGroupIdx++;
             }
         }
         std::runtime_error("Not found in semanticGroupIdx");
-        return "";
     }
 
     //- {fn}
