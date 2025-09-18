@@ -471,12 +471,16 @@ public:
     std::vector<std::unique_ptr<SemanticGroup>> semanticGroups;
     std::vector<std::unique_ptr<SemanticNode>> semanticNodes;
 
+    constexpr auto emplaceAndReturn(auto ptr, auto &vec){
+        auto rawPtr = ptr.get();
+        vec.emplace_back(std::move(ptr));
+        return rawPtr;
+    }
+
     template<typename GroupType>
     GroupType* addSemanticGroup(std::string tag) {
         auto ptr = std::make_unique<GroupType>(std::move(tag));
-        auto rawPtr = ptr.get();
-        semanticGroups.emplace_back(std::move(ptr));
-        return rawPtr;
+        return emplaceAndReturn(std::move(ptr), semanticGroups);
     }
 
 
@@ -489,16 +493,13 @@ public:
     }
 
 
-
-
     //-only-file header
     template<typename GateType, typename... Args>
     GateType* addLogicalGate(const TagOut& result, Args&&... args) {
         //result.invalidateAfterFirstTime();
         auto ptr = std::make_unique<GateType>(result, std::forward<Args>(args)...);
-        auto rawPtr = ptr.get();
-        semanticNodes.emplace_back(std::move(ptr));
-        return rawPtr;
+
+        return emplaceAndReturn(std::move(ptr), semanticNodes);
     }
 
 
@@ -509,9 +510,7 @@ public:
     //-only-file body
     {
         auto ptr = std::make_unique<FixedValue>(tag, datatype, val);
-        auto rawPtr = ptr.get();
-        semanticNodes.emplace_back(std::move(ptr));
-        return rawPtr;
+        return emplaceAndReturn(std::move(ptr), semanticNodes);
     }
 
     //- {fn}
@@ -521,9 +520,7 @@ public:
     //-only-file body
     {
         auto ptr = std::make_unique<ExternalHwBindingIn>(tag, datatype, dataLen, isConst);
-        auto rawPtr = ptr.get();
-        externalHwBindings.emplace_back(std::move(ptr));
-        return rawPtr;
+        return emplaceAndReturn(std::move(ptr), externalHwBindings);
     }
 
     //- {fn}
@@ -533,9 +530,7 @@ public:
     //-only-file body
     {
         auto ptr = std::make_unique<ExternalHwBindingOut>(tag, datatype, dataLen, isConst);
-        auto rawPtr = ptr.get();
-        externalHwBindings.emplace_back(std::move(ptr));
-        return rawPtr;
+        return emplaceAndReturn(std::move(ptr), externalHwBindings);
     }
 
     //- {fn}
